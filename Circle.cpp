@@ -1,0 +1,29 @@
+#include "Circle.h"
+
+Circle::Circle(double radius)
+{
+	static const std::string ERROR_MESSAGE = "Radius value must be greater than 0";
+	if (radius < 0)
+		throw std::invalid_argument(ERROR_MESSAGE);
+
+	this->radius = radius;
+	perimeter = CalculatePerimeter();
+}
+
+Circle* Circle::clone() const
+{
+	return new Circle(*this);
+}
+
+const std::string Circle::toString() const
+{
+	std::stringstream builder;
+	builder << "circle " << radius;
+	return builder.str();
+}
+
+double Circle::CalculatePerimeter() const
+{
+	static const double PI = 3.1416;
+	return 2 * radius * PI;
+}
