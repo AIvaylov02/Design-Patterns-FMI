@@ -5,7 +5,7 @@ class Circle : public Figure
 {
 public:
 	Circle(double radius);
-	virtual Circle* clone() const override;
+	virtual std::unique_ptr<Figure> clone() const override;
 	virtual const std::string toString() const override;
 
 protected:

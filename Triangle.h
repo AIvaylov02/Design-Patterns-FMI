@@ -5,7 +5,7 @@ class Triangle : public Figure
 {
 public:
 	Triangle(double sideA, double sideB, double sideC);
-	virtual Triangle* clone() const override;
+	virtual std::unique_ptr<Figure> clone() const override;
 	virtual const std::string toString() const override;
 
 protected:

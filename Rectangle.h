@@ -5,7 +5,7 @@ class Rectangle : public Figure
 {
 public:
 	Rectangle(double sideA, double sideB);
-	virtual Rectangle* clone() const override;
+	virtual std::unique_ptr<Figure> clone() const override;
 	virtual const std::string toString() const override;
 
 protected:

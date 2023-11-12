@@ -10,9 +10,9 @@ Circle::Circle(double radius)
 	perimeter = CalculatePerimeter();
 }
 
-Circle* Circle::clone() const
+std::unique_ptr<Figure> Circle::clone() const
 {
-	return new Circle(*this);
+	return std::make_unique<Circle>(*this);
 }
 
 const std::string Circle::toString() const

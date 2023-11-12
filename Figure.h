@@ -7,7 +7,7 @@ class Figure
 {
 public:
 	Figure();
-	virtual Figure* clone() const = 0;
+	virtual std::unique_ptr<Figure> clone() const = 0;
 	virtual ~Figure() = default;
 
 	virtual const std::string toString() const = 0;

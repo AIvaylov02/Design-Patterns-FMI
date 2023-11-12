@@ -11,9 +11,9 @@ Rectangle::Rectangle(double sideA, double sideB)
 	perimeter = CalculatePerimeter();
 }
 
-Rectangle* Rectangle::clone() const
+std::unique_ptr<Figure> Rectangle::clone() const
 {
-	return new Rectangle(*this);
+	return std::make_unique<Rectangle>(*this);
 }
 
 const std::string Rectangle::toString() const

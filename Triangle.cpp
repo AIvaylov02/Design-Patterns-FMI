@@ -12,9 +12,9 @@ Triangle::Triangle(double sideA, double sideB, double sideC)
 	perimeter = CalculatePerimeter();
 }
 
-Triangle* Triangle::clone() const
+std::unique_ptr<Figure> Triangle::clone() const
 {
-	return new Triangle(*this);
+	return std::make_unique<Triangle>(*this);
 }
 
 const std::string Triangle::toString() const
