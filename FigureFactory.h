@@ -7,8 +7,8 @@
 
 class FigureFactory
 {
-public:
-	static Figure* createFigure(std::stringstream& input);
+protected:
+	static std::unique_ptr<Figure> createFigure(std::stringstream& input);
 private:
 	// bool isValidFigureType(const std::string& str, const std::unordered_map<std::string, constructor_func>& collection) const;
 	static void ValidateFigureType(const std::string& str);

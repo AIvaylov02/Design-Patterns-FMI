@@ -1,5 +1,27 @@
 #include <iostream>
 #include "FigureFactory.h"
+#include "InputFileContainer.h"
+#include "OutputFileContainer.h"
+
+std::vector<std::unique_ptr<Figure>> ExecuteRandomChoice()
+{
+	std::cout << "Please enter your desired count of figures to generate: ";
+	int figuresToGenerate = 0;
+	std::cin >> figuresToGenerate;
+	while (figuresToGenerate <= 0)
+	{
+		std::cout << "Please enter a positive integer!\n";
+		std::cout << "Figures to generate: ";
+		std::cin >> figuresToGenerate;
+	}
+
+	std::vector<std::unique_ptr<Figure>> figures(figuresToGenerate);
+	for (int i = 0; i < figuresToGenerate; i++)
+	{
+		//figures[i] = RandomFigureFactory::createFigure
+	}
+	return figures;
+}
 
 std::vector<std::unique_ptr<Figure>> InitialPrompt()
 {
@@ -47,26 +69,6 @@ std::vector<std::unique_ptr<Figure>> InitialPrompt()
 	
 }
 
-std::vector<std::unique_ptr<Figure>> ExecuteRandomChoice()
-{
-	std::cout << "Please enter your desired count of figures to generate: ";
-	int figuresToGenerate = 0;
-	std::cin >> figuresToGenerate;
-	while (figuresToGenerate <= 0)
-	{
-		std::cout << "Please enter a positive integer!\n";
-		std::cout << "Figures to generate: ";
-		std::cin >> figuresToGenerate;
-	}
-	
-	std::vector<std::unique_ptr<Figure>> figures(figuresToGenerate);
-	for (int i = 0; i < figuresToGenerate; i++)
-	{
-		//figures[i] = RandomFigureFactory::createFigure
-	}
-	return figures;
-}
-
 void PrintCollectionOperationHints()
 {
 	std::cout << "What would you like to do with the accumulated figures? Here are the valid options:\n";
@@ -84,6 +86,18 @@ void PrintFiguresOnConsole(const std::vector<std::unique_ptr<Figure>>& figures)
 		std::cout << (*iterToElement)->toString() << '\n';
 }
 
+bool ValidateIndexForCollectionManipulation(int lowerLimit, int upperLimit, const std::string entryMessage)
+{
+	int index = -1;
+	do
+	{
+		std::cout << entryMessage << " You can choose a number between :";
+		std::cout << "[" << lowerLimit << ", " << upperLimit << "] \n";
+		std::cin >> index; // begin e 0, za 7 elementa end e 8
+	} while (index < 0 || index > upperLimit);
+	return index;
+}
+
 void DeleteFigure(std::vector<std::unique_ptr<Figure>>& figures)
 {
 	if (figures.empty())
@@ -92,63 +106,93 @@ void DeleteFigure(std::vector<std::unique_ptr<Figure>>& figures)
 		return;
 	}
 
-	int index;
-	std::cin >> index;
-	DeleteFigureAtIndex(figures, index);
+	int index = ValidateIndexForCollectionManipulation(0, figures.end() - figures.begin() - 1, "Please enter which figure to delete by specifying its index.");
+	figures.erase(figures.begin() + index); // remove the smart ptr(who will delete his own data) from the vector
 }
 
-void DeleteFigureAtIndex(std::vector<std::unique_ptr<Figure>>& figures, int index)
+void DisplayFigureAdditionMessage()
 {
-	// Alternative would be to use try catch and disallow the deletion if invalid and exit. I want to stick the deletion for a possible retry of the user.
-	do
-	{
-		std::cout << "Please enter which figure to delete by specifying its index. You can choose a number between:";
-		std::cout << "[" << 0 << ", " << figures.end() - figures.begin() - 1 << "] \n";
-		std::cin >> index; // begin e 0, za 7 elementa end e 8
-	} while (index < 0 || index > figures.size());
-	figures.erase(figures.begin() + index); // release the space allocated for the ptr in the vector
+	std::cout << "Where do you want to put the newly cloned figure? Choose one of the following keys\n";
+	std::cout << "e) To put it at the end of the collection\n";
+	std::cout << "a) To put it right after the cloned object\n";
+	std::cout << "n) To enter a number that will be used as 'resting' place for this newly created figure\n";
 }
 
-std::unique_ptr<Figure> GenerateFigureDuplicateFromIndex(const std::vector<std::unique_ptr<Figure>>& figures, int index)
+// Inserts the figure at the desired location. Note that it adds an extra element and does not replace an existing one if such exists at that spot
+void AddFigureToList(std::vector<std::unique_ptr<Figure>>& figures, std::unique_ptr<Figure> figure, int index)
 {
-	// Alternative would be to use try catch and disallow the cloning if invalid and exit. I want to stick the clone method for a possible retry of the user.
-	do
+	DisplayFigureAdditionMessage();
+	enum inputPlace
 	{
-		std::cout << "Please enter which figure to clone by specifying its index. You can choose a number between:";
-		std::cout << "[" << 0 << ", " << figures.end() - figures.begin() - 1 << "] \n";
-		std::cin >> index; // begin e 0, za 7 elementa end e 8
-	} while (index < 0 || index > figures.size());
-	return figures[index]->clone();
+		end = 'e',
+		after = 'a',
+		selected_index = 'n'
+	};
+
+	char ch = 0;
+	while (true)
+	{
+		std::cin >> ch;
+		switch (ch)
+		{
+			case inputPlace::end:
+				figures.push_back(figure);
+				return;
+
+			case inputPlace::selected_index:
+				index = ValidateIndexForCollectionManipulation(0, figures.end() - figures.begin() - 1, "Please enter on which index to put the newly cloned figure.");
+			case inputPlace::after:
+				figures.insert(figures.begin() + index, figure);
+				return;
+
+			default: // invalidInput
+				std::cout << "Please constrain yourself to the given options!\n";
+				DisplayFigureAdditionMessage();
+		}
+	}
+	
 }
 
-std::unique_ptr<Figure> GenerateFigureDuplicate(const std::vector<std::unique_ptr<Figure>>& figures)
+void DuplicateFigure(std::vector<std::unique_ptr<Figure>>& figures)
 {
 	if (figures.empty())
 	{
-		std::cout << "The collection is empty. You cannot clone from it. Please enter a new collection to use this operation.\n";
+		std::cout << "The collection is empty. You cannot clone figures from it. Please enter a new collection to use this operation.\n";
 		return;
 	}
+	//Generate figure duplicate
+	int index = ValidateIndexForCollectionManipulation(0, figures.end() - figures.begin() - 1, "Please enter which figure to clone by specifying its index.");
+	std::unique_ptr<Figure> figure = std::move(figures[index]->clone());
 
-	int index;
-	std::cin >> index;
-	return GenerateFigureDuplicateFromIndex(figures, index);
+	AddFigureToList(figures, figure, index);
 }
 
-// Appends the figure to the end
-void AddFigureToList(std::vector<std::unique_ptr<Figure>>& figures, std::unique_ptr<Figure> figure)
+const std::string ValidateFileNameUntilItsCorrect()
 {
-	figures.push_back(figure);
+	std::string fileName;
+	while (true)
+	{
+		std::cout << "Please enter the file's name, together with its extensions. It should follow the format <fileName>.<extension>\n";
+		std::cout << "Note that dots in the file's name are considered forbidden.\n";
+		std::getline(std::cin, fileName);
+		// check if the fileName is in the supported format. Only one dot is allowed
+		if (fileName.find('.') != -1 && fileName.find('.') != fileName.rfind('.'))
+			break;
+	}
+	return fileName;
 }
 
-// Inserts the figure at the desired location. Note that it adds an extra element and does not replace an existing one
-void AddFigureToList(std::vector<std::unique_ptr<Figure>>& figures, std::unique_ptr<Figure> figure, int index)
+void SaveCollectionToFile(const std::vector<std::unique_ptr<Figure>>& figures)
 {
-	figures.insert(figures.begin() + index, figure);
-}
-
-void DuplicateFigure()
-{
-	// TODO add UI and combine the above code
+	std::cout << "Please enter the file's name, together with its extensions. It should follow the format <fileName>.<extension>\n";
+	const std::string fileName = ValidateFileNameUntilItsCorrect();
+	std::cout << "Enter a mode please for writing to the file. By default the file will be overwritten. If you don't want that press 't'\n";
+	char mode = 'a';
+	std::cin >> mode;
+	OutputFileContainer outputFile(fileName, mode);
+	outputFile.WriteLine(figures.size());
+	for (auto iterToElement = figures.begin(); iterToElement < figures.end(); iterToElement++)
+		outputFile.WriteLine((*iterToElement)->toString());
 }
 
 void PerformCollectionOperations(std::vector<std::unique_ptr<Figure>>& figures)
@@ -181,11 +225,11 @@ void PerformCollectionOperations(std::vector<std::unique_ptr<Figure>>& figures)
 				DeleteFigure(figures);
 				break;
 			case duplicateFigure:
-				// TODO
-				DuplicateFigure();
+				DuplicateFigure(figures);
 				break;
 			case saveToFile:
-				// TODO. Add a file wrapper class which will manage the resources of the file. Then use this implementation in the fileFactory and here
+				// Add a file wrapper class which will manage the resources of the file. Then use this implementation in the fileFactory and here
+				SaveCollectionToFile(figures);
 				break;
 			default: // invalid input entered
 				std::cout << "Please enter a valid choice value between [" << availableActions::exit << ", " << availableActions::saveToFile << "]\n";

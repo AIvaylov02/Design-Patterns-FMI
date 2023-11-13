@@ -14,7 +14,9 @@ Triangle::Triangle(double sideA, double sideB, double sideC)
 
 std::unique_ptr<Figure> Triangle::clone() const
 {
-	return std::make_unique<Triangle>(*this);
+	//return std::make_unique<Triangle>(*this);
+	std::unique_ptr<Triangle> ptr = std::make_unique<Triangle>(*this);
+	return std::move(ptr); // it broke, maybe this correction of the above code will fix it
 }
 
 const std::string Triangle::toString() const

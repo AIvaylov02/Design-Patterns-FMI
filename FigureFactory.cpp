@@ -13,7 +13,7 @@ void FigureFactory::ValidateFigureType(const std::string& str)
 		throw std::invalid_argument(MESSAGE);
 }
 
-Figure* FigureFactory::createFigure(std::stringstream& stream)
+std::unique_ptr<Figure> FigureFactory::createFigure(std::stringstream& stream)
 {
 	std::vector<std::string> command;
 	FillStreamIntoStrings(stream, command);
@@ -27,9 +27,9 @@ Figure* FigureFactory::createFigure(std::stringstream& stream)
 	// note: c++ doesn't support switch with string as comparable object 
 	std::vector<double> values = ExtractValues(command);
 	if (typeToCreate == "circle")
-		return new Circle(values[0]);
+		return std::make_unique<Circle>(values[0]);
 	else if (typeToCreate == "rectangle")
-		return new Rectangle(values[0], values[1]);
+		return std::make_unique<Rectangle>(values[0], values[1]);
 	else // triangle
-		return new Triangle(values[0], values[1], values[2]);
+		return std::make_unique<Triangle>(values[0], values[1], values[2]);
 }

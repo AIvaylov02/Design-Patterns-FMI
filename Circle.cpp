@@ -12,7 +12,9 @@ Circle::Circle(double radius)
 
 std::unique_ptr<Figure> Circle::clone() const
 {
-	return std::make_unique<Circle>(*this);
+	//return std::make_unique<Circle>(*this);
+	std::unique_ptr<Circle> ptr = std::make_unique<Circle>(*this);
+	return std::move(ptr); // it broke, maybe this correction of the above code will fix it
 }
 
 const std::string Circle::toString() const
