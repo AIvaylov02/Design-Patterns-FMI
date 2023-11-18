@@ -1,0 +1,4 @@
+3
+triangle 10 20 30
+circle 5
+rectangle 2 5

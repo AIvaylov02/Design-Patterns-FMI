@@ -13,9 +13,7 @@ Rectangle::Rectangle(double sideA, double sideB)
 
 std::unique_ptr<Figure> Rectangle::clone() const
 {
-	//return std::make_unique<Rectangle>(*this);
-	std::unique_ptr<Rectangle> ptr = std::make_unique<Rectangle>(*this);
-	return std::move(ptr); // it broke, maybe this correction of the above code will fix it
+	return std::make_unique<Rectangle>(*this);
 }
 
 const std::string Rectangle::toString() const

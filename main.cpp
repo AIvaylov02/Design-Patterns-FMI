@@ -1,26 +1,44 @@
 #include <iostream>
-#include "FigureFactory.h"
-#include "InputFileContainer.h"
-#include "OutputFileContainer.h"
+#include "Factories/STDINFigureFactory.h"
+#include "FileContainers/OutputFileContainer.h"
+#include "FileContainers/InputFileContainer.h"
+#include "Factories/RandomFigureFactory.h"
+#include "Factories/FileFigureFactory.h"
 
-std::vector<std::unique_ptr<Figure>> ExecuteRandomChoice()
+void ValidateFactoryChoice(int& choice, int lowerBound, int upperBound);
+std::vector<std::unique_ptr<Figure>> InitialPrompt();
+void PrintCollectionOperationHints();
+void PrintFiguresOnConsole(const std::vector<std::unique_ptr<Figure>>& figures);
+bool ValidateIndexForCollectionManipulation(int lowerLimit, int upperLimit, const std::string entryMessage);
+void DeleteFigure(std::vector<std::unique_ptr<Figure>>& figures);
+void DisplayFigureAdditionMessage();
+// Inserts the figure at the desired location. Note that it adds an extra element and does not replace an existing one if such exists at that spot
+void AddFigureToList(std::vector<std::unique_ptr<Figure>>& figures, std::unique_ptr<Figure> figure, int index);
+void DuplicateFigure(std::vector<std::unique_ptr<Figure>>& figures);
+void SaveCollectionToFile(const std::vector<std::unique_ptr<Figure>>& figures);
+void PerformCollectionOperations(std::vector<std::unique_ptr<Figure>>& figures);
+
+
+int main() {	
+	std::vector<std::unique_ptr<Figure>> figures = InitialPrompt();
+	PerformCollectionOperations(figures);
+}
+
+
+
+void ValidateFactoryChoice(int& choice, int lowerBound, int upperBound)
 {
-	std::cout << "Please enter your desired count of figures to generate: ";
-	int figuresToGenerate = 0;
-	std::cin >> figuresToGenerate;
-	while (figuresToGenerate <= 0)
+	static const int DEFAULT_INVALID_CHOICE = -1;
+	while (choice == DEFAULT_INVALID_CHOICE)
 	{
-		std::cout << "Please enter a positive integer!\n";
-		std::cout << "Figures to generate: ";
-		std::cin >> figuresToGenerate;
+		std::cin >> choice;
+		if (choice < lowerBound || choice > upperBound)
+		{
+			// nullify the input and try for a reprompt
+			choice = DEFAULT_INVALID_CHOICE;
+			std::cout << "Please enter a valid choice value between [" << lowerBound << ", " << upperBound << "]\n";
+		}
 	}
-
-	std::vector<std::unique_ptr<Figure>> figures(figuresToGenerate);
-	for (int i = 0; i < figuresToGenerate; i++)
-	{
-		//figures[i] = RandomFigureFactory::createFigure
-	}
-	return figures;
 }
 
 std::vector<std::unique_ptr<Figure>> InitialPrompt()
@@ -37,36 +55,69 @@ std::vector<std::unique_ptr<Figure>> InitialPrompt()
 		fileInput
 	};
 
-	const int DEFAULT_INVALID_CHOICE = -1;
-	int choice = DEFAULT_INVALID_CHOICE;
-	while (choice == DEFAULT_INVALID_CHOICE)
+	
+	int choice = -1;
+	ValidateFactoryChoice(choice, creationChoice::random, creationChoice::fileInput);
+
+	std::unique_ptr<FigureFactory> factory;
+	std::vector<std::unique_ptr<Figure>> figures;
+	int figuresToGenerate = 0;
+	if (choice == creationChoice::fileInput)
 	{
-		std::cin >> choice;
-		switch (choice)
+		factory = std::make_unique<FileFigureFactory>();
+		// we need to read the lines count. We cannot break the createFigure signature and use it to return a whole collection. We need to use dynamic cast
+		// which will limit us to using rawPtr but this way we have access to the new method of readFiguresCount;
+		FileFigureFactory* rawPtr = dynamic_cast<FileFigureFactory*>(factory.release());
+		int figuresToGenerate = rawPtr->ReadFiguresCount();
+		for (int i = 0; i < figuresToGenerate; i++)
 		{
-			case creationChoice::random:
-				std::cout << "Rand";
-				// TODO
-				return ExecuteRandomChoice();
-
-			case creationChoice::consoleInput:
-				// TODO
-				std::cout << "Console";
-				break;
-
-			case creationChoice::fileInput:
-				// TODO
-				std::cout << "File";
-				break;
-
-			default:
-				// nullify the input and try for a reprompt
-				choice = DEFAULT_INVALID_CHOICE;
-				std::cout << "Please enter a valid choice value between [" << creationChoice::random << ", " << creationChoice::fileInput << "]\n";
-				break;
+			try 
+			{
+				figures.push_back(rawPtr->createFigure());
+			}
+			catch (std::invalid_argument)
+			{
+				std::cout << "Current figure was not created properly. Bear in mind that the collection will have a figure less!";
+			}
 		}
+			
+		delete rawPtr;
+	}
+	else // we have to receive figures' count from console
+	{
+		std::cout << "Please enter your desired count of figures to generate: ";
+		std::cin >> figuresToGenerate;
+		while (figuresToGenerate <= 0)
+		{
+			std::cout << "Please enter a positive integer!\n";
+			std::cout << "Figures to generate: ";
+			std::cin >> figuresToGenerate;
+		}
+
+		if (choice == creationChoice::consoleInput)
+			factory = std::make_unique<STDINFigureFactory>();
+		else
+			factory = std::make_unique<RandomFigureFactory>();
+			
+		// clear the cin buffer before entering figure creation to have getline be waited by the function
+		std::cin.ignore();
+		for (int i = 0; i < figuresToGenerate; i++)
+		{
+			// if a figure fails to create, the user can manipulate the input or the programme can generate another one
+			try
+			{
+				figures.push_back(factory->createFigure());
+			}
+			catch (std::invalid_argument)
+			{
+				std::cout << "Figure was not created successfully. Don't worry you will be prompted/the programme will generate a new one!\n";
+				i--;
+			}
+		}
+
 	}
 	
+	return figures;
 }
 
 void PrintCollectionOperationHints()
@@ -93,7 +144,7 @@ bool ValidateIndexForCollectionManipulation(int lowerLimit, int upperLimit, cons
 	{
 		std::cout << entryMessage << " You can choose a number between :";
 		std::cout << "[" << lowerLimit << ", " << upperLimit << "] \n";
-		std::cin >> index; // begin e 0, za 7 elementa end e 8
+		std::cin >> index;
 	} while (index < 0 || index > upperLimit);
 	return index;
 }
@@ -135,22 +186,22 @@ void AddFigureToList(std::vector<std::unique_ptr<Figure>>& figures, std::unique_
 		std::cin >> ch;
 		switch (ch)
 		{
-			case inputPlace::end:
-				figures.push_back(figure);
-				return;
+		case inputPlace::end:
+			figures.push_back(std::move(figure));
+			return;
 
-			case inputPlace::selected_index:
-				index = ValidateIndexForCollectionManipulation(0, figures.end() - figures.begin() - 1, "Please enter on which index to put the newly cloned figure.");
-			case inputPlace::after:
-				figures.insert(figures.begin() + index, figure);
-				return;
+		case inputPlace::selected_index:
+			index = ValidateIndexForCollectionManipulation(0, figures.end() - figures.begin() - 1, "Please enter on which index to put the newly cloned figure.");
+		case inputPlace::after:
+			figures.insert(figures.begin() + index, std::move(figure));
+			return;
 
-			default: // invalidInput
-				std::cout << "Please constrain yourself to the given options!\n";
-				DisplayFigureAdditionMessage();
+		default: // invalidInput
+			std::cout << "Please constrain yourself to the given options!\n";
+			DisplayFigureAdditionMessage();
 		}
 	}
-	
+
 }
 
 void DuplicateFigure(std::vector<std::unique_ptr<Figure>>& figures)
@@ -162,29 +213,15 @@ void DuplicateFigure(std::vector<std::unique_ptr<Figure>>& figures)
 	}
 	//Generate figure duplicate
 	int index = ValidateIndexForCollectionManipulation(0, figures.end() - figures.begin() - 1, "Please enter which figure to clone by specifying its index.");
-	std::unique_ptr<Figure> figure = std::move(figures[index]->clone());
+	std::unique_ptr<Figure> figure = figures[index]->clone();
 
-	AddFigureToList(figures, figure, index);
+	AddFigureToList(figures, std::move(figure), index);
 }
 
-const std::string ValidateFileNameUntilItsCorrect()
-{
-	std::string fileName;
-	while (true)
-	{
-		std::cout << "Please enter the file's name, together with its extensions. It should follow the format <fileName>.<extension>\n";
-		std::cout << "Note that dots in the file's name are considered forbidden.\n";
-		std::getline(std::cin, fileName);
-		// check if the fileName is in the supported format. Only one dot is allowed
-		if (fileName.find('.') != -1 && fileName.find('.') != fileName.rfind('.'))
-			break;
-	}
-	return fileName;
-}
+
 
 void SaveCollectionToFile(const std::vector<std::unique_ptr<Figure>>& figures)
 {
-	std::cout << "Please enter the file's name, together with its extensions. It should follow the format <fileName>.<extension>\n";
 	const std::string fileName = ValidateFileNameUntilItsCorrect();
 	std::cout << "Enter a mode please for writing to the file. By default the file will be overwritten. If you don't want that press 't'\n";
 	char mode = 'a';
@@ -208,49 +245,37 @@ void PerformCollectionOperations(std::vector<std::unique_ptr<Figure>>& figures)
 	};
 
 	int choice;
-	do 
+	PrintCollectionOperationHints();
+	do
 	{
 		std::cin >> choice;
 		switch (choice)
 		{
-			case exit:
-				break;
-			case printHelpInfo:
-				PrintCollectionOperationHints();
-				break;
-			case printFigures:
-				PrintFiguresOnConsole(figures);
-				break;
-			case deleteFigure:
-				DeleteFigure(figures);
-				break;
-			case duplicateFigure:
-				DuplicateFigure(figures);
-				break;
-			case saveToFile:
-				// Add a file wrapper class which will manage the resources of the file. Then use this implementation in the fileFactory and here
-				SaveCollectionToFile(figures);
-				break;
-			default: // invalid input entered
-				std::cout << "Please enter a valid choice value between [" << availableActions::exit << ", " << availableActions::saveToFile << "]\n";
-				std::cout << "If you need help, then press 1) to receive additional help information or 0) to exit the programme if you are done\n";
+		case exit:
+			break;
+		case printHelpInfo:
+			PrintCollectionOperationHints();
+			break;
+		case printFigures:
+			PrintFiguresOnConsole(figures);
+			std::cout << "Done. Please select the next operation\n";
+			break;
+		case deleteFigure:
+			DeleteFigure(figures);
+			std::cout << "Done. Please select the next operation\n";
+			break;
+		case duplicateFigure:
+			DuplicateFigure(figures);
+			std::cout << "Done. Please select the next operation\n";
+			break;
+		case saveToFile:
+			// Add a file wrapper class which will manage the resources of the file. Then use this implementation in the fileFactory and here
+			SaveCollectionToFile(figures);
+			PrintCollectionOperationHints();
+			break;
+		default: // invalid input entered
+			std::cout << "Please enter a valid choice value between [" << availableActions::exit << ", " << availableActions::saveToFile << "]\n";
+			std::cout << "If you need help, then press 1) to receive additional help information or 0) to exit the programme if you are done\n";
 		}
 	} while (choice != exit);
-}
-
-int main() {
-	/*Triangle tr(10, 20, 30);
-	Circle cl(5);
-	Rectangle rec(2, 5);
-	std::cout << tr.toString() << " 's perimeter is: " << tr.getPerimeter()
-		<< '\n' << cl.toString() << " 's perimeter is: " << cl.getPerimeter()
-		<< '\n' << rec.toString() << " 's perimeter is: " << rec.getPerimeter();*/
-	
-		/*std::string input("rectangle 5 2");
-	std::stringstream splitInput;
-	splitInput << input;
-	FigureFactory::createFigure(splitInput);*/
-	std::vector<std::unique_ptr<Figure>> figures = InitialPrompt();
-	// we have a valid collection now, lets do some operations on them
-	PerformCollectionOperations(figures);
 }

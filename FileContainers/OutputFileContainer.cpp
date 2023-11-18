@@ -28,12 +28,12 @@ void OutputFileContainer::GetToFileEnd()
 
 void OutputFileContainer::WriteLine(const std::string& line)
 {
-	file << line;
+	file << line << '\n';
 }
 
 void OutputFileContainer::WriteLine(int num)
 {
-	file << num;
+	file << num << '\n';
 }
 
 void OutputFileContainer::WriteWord(const std::string& word)

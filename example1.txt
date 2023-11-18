@@ -1,0 +1,21 @@
+20
+triangle 54 98 68
+triangle 83 94 55
+rectangle 12 63
+rectangle 97 62
+rectangle 63 76
+circle 52
+rectangle 8 97
+triangle 52 39 40
+circle 12
+rectangle 88 40
+rectangle 66 15
+circle 11
+rectangle 77 24
+circle 16
+circle 51
+circle 60
+triangle 74 16 67
+triangle 38 93 56
+circle 30
+circle 31

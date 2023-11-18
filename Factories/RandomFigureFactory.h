@@ -4,5 +4,5 @@
 class RandomFigureFactory : public FigureFactory
 {
 public:
-	static std::unique_ptr<Figure> createFigure();
+	virtual std::unique_ptr<Figure> createFigure() override final;
 };
