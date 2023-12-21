@@ -36,6 +36,7 @@ namespace DP_Task2_Tests
         }
     }
 
+    [TestFixture]
     public class RichLabelTests
     {
         private const string EMPTY_STRING = "";

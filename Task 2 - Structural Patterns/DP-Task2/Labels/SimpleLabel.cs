@@ -7,6 +7,8 @@ namespace DP_Task2.Labels
         string value;
         public SimpleLabel(string value)
         {
+            // this is unchangeable code. By the task definition there are no NULL CHECKS, so we don't check for it but it also won't be NULL.
+            // It is guaranteed valid
             this.value = value;
         }
 

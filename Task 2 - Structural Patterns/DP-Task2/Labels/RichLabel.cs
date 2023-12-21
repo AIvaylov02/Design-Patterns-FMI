@@ -11,6 +11,8 @@ namespace DP_Task2.Labels
 
         public RichLabel(string text, string textColor, string font, double fontSize)
         {
+            // this is unchangeable code by design. By the task definition there are no NULL CHECKS, so we don't check for it but it also won't be NULL.
+            // It is guaranteed valid
             this.text = text;
             this.textColor = textColor;
             this.font = font;
