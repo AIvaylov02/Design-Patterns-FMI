@@ -1,4 +1,7 @@
-﻿using DP_Task2.Labels;
+﻿using DP_Task2.Interfaces;
+using DP_Task2.LabelDecorators;
+using DP_Task2.Labels;
+using DP_Task2.Transformations;
 
 namespace DP_Task2
 {
@@ -6,13 +9,7 @@ namespace DP_Task2
     {
         static void Main(string[] args)
         {
-            SimpleLabel simp = new SimpleLabel("abc");
-            string myLabel = simp.Text;
-            myLabel = myLabel.ToUpper();
-            Console.WriteLine(myLabel);
-            Console.WriteLine(simp.Text);
-            Console.WriteLine();
-            LabelPrinter.PrintLabel(simp);
+            Console.WriteLine("Hi!");
         }
 
     }
