@@ -72,5 +72,32 @@ namespace DP_Task2.LabelDecorators
                 transformations.Add(style);
             }
         }
+
+
+        public override ILabel RemoveDecorator()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ILabel RemoveDecorator(ITextTransformation style)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public override void AddDecorator(ITextTransformation style)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void AddDecorator(LabelDecoratorBase decoratorOnTop)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ILabel RemoveDecorator(LabelDecoratorBase decoratorOnTop)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

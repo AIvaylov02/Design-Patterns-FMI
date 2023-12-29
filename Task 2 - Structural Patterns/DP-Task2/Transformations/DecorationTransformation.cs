@@ -3,8 +3,18 @@ using System.Text;
 
 namespace DP_Task2.Transformations
 {
-    public class DecorationTransformation : ITextTransformation
+    public class DecorationTransformation : ITextTransformation, IEquatable<DecorationTransformation>
     {
+        public bool Equals(DecorationTransformation? other)
+        {
+            return other is DecorationTransformation;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as DecorationTransformation);
+        }
+
         public string Transform(string text)
         {
             if (text == null)

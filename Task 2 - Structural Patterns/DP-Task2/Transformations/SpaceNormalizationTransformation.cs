@@ -3,8 +3,18 @@ using System.Text;
 
 namespace DP_Task2.Transformations
 {
-    public class SpaceNormalizationTransformation : ITextTransformation
+    public class SpaceNormalizationTransformation : ITextTransformation, IEquatable<SpaceNormalizationTransformation>
     {
+        public bool Equals(SpaceNormalizationTransformation? other)
+        {
+            return other is SpaceNormalizationTransformation;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as SpaceNormalizationTransformation);
+        }
+
         public string Transform(string text)
         {
             if (text == null)

@@ -1,11 +1,23 @@
-﻿using DP_Task2.Interfaces;
-using System.Text;
+﻿using System.Text;
 
 namespace DP_Task2.Transformations
 {
-    public class CensorerTransformation : BadWordTransformation
+    public class CensorerTransformation : BadWordTransformation, IEquatable<CensorerTransformation>
     {
         public CensorerTransformation(string badWord) : base(badWord) { }
+
+        public bool Equals(CensorerTransformation? other)
+        {
+            if (other is not CensorerTransformation)
+                return false;
+
+            return BadWord == other.BadWord;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as CensorerTransformation);
+        }
 
         // redefine the specific part of the template method Transform
         protected override string GenerateCensorshipReplacement()

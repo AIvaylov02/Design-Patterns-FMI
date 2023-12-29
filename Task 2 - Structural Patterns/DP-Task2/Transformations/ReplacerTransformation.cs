@@ -1,13 +1,25 @@
-﻿using DP_Task2.Interfaces;
-
+﻿
 namespace DP_Task2.Transformations
 {
-    public class ReplacerTransformation : BadWordTransformation
+    public class ReplacerTransformation : BadWordTransformation, IEquatable<ReplacerTransformation>
     {
         private string replacement;
         public ReplacerTransformation(string badWord, string replacement) : base(badWord)
         {
             Replacement = replacement;
+        }
+
+        public bool Equals(ReplacerTransformation? other)
+        {
+            if (other is not ReplacerTransformation)
+                return false;
+
+            return BadWord == other.BadWord && Replacement == other.Replacement;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as ReplacerTransformation);
         }
 
 

@@ -2,8 +2,18 @@
 
 namespace DP_Task2.Transformations
 {
-    public class CapitalizeTransformation : ITextTransformation
+    public class CapitalizeTransformation : ITextTransformation, IEquatable<CapitalizeTransformation>
     {
+        public bool Equals(CapitalizeTransformation? other)
+        {
+            return other is CapitalizeTransformation;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as CapitalizeTransformation);
+        }
+
         public string Transform(string text)
         {
             if (text == null)

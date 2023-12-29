@@ -2,8 +2,18 @@
 
 namespace DP_Task2.Transformations
 {
-    public class TrimLeftTransformation : ITextTransformation
+    public class TrimLeftTransformation : ITextTransformation, IEquatable<TrimLeftTransformation>
     {
+        public bool Equals(TrimLeftTransformation? other)
+        {
+            return other is TrimLeftTransformation;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as TrimLeftTransformation);
+        }
+
         public string Transform(string text)
         {
             if (text == null)
