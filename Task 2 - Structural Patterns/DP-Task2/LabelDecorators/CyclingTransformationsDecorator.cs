@@ -37,29 +37,32 @@ namespace DP_Task2.LabelDecorators
             }
         }
 
-        public override void AddDecorator(ITextTransformation style)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void AddDecorator(LabelDecoratorBase decoratorOnTop)
-        {
-            throw new NotImplementedException();
-        }
-
         public override ILabel RemoveDecorator()
         {
-            throw new NotImplementedException();
+            if (transformations.Count != 0)
+            {
+                int removeIndex = transformations.Count - 1;
+                if (nextTransformationIndex == removeIndex)
+                    nextTransformationIndex = 0;
+                transformations.RemoveAt(removeIndex);
+            }
+            return this;
         }
 
         public override ILabel RemoveDecorator(ITextTransformation style)
         {
-            throw new NotImplementedException();
-        }
-
-        public override ILabel RemoveDecorator(LabelDecoratorBase decoratorOnTop)
-        {
-            throw new NotImplementedException();
+            if (style is not null)
+            {
+                int removeIndex = transformations.LastIndexOf(style);
+                if (removeIndex <= nextTransformationIndex)
+                {
+                    nextTransformationIndex--;
+                    if (nextTransformationIndex < 0)
+                        nextTransformationIndex = 0;
+                }
+                transformations.RemoveAt(removeIndex);
+            }
+            return this;
         }
     }
 }

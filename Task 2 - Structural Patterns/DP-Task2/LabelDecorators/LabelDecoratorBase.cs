@@ -17,14 +17,81 @@ namespace DP_Task2.LabelDecorators
         // text transformation means one style, while a LabelDecoratorBase can be a list of styles
         public abstract void AddDecorator(ITextTransformation style);
 
-        public abstract void AddDecorator(LabelDecoratorBase decoratorOnTop);
+        public void AddDecorator(LabelDecoratorBase decoratorOnTop)
+        {
+            RandomTransformationDecorator? randomOther = decoratorOnTop as RandomTransformationDecorator;
+            if (randomOther is not null)
+            {
+                AddRandomDecorator(randomOther);
+            }
+            else // simple label or other type
+            {
+                TextTransformationDecorator? textOther = decoratorOnTop as TextTransformationDecorator;
+                if (textOther is not null) // it is textTransformationDecorator
+                {
+                    // extract its styles
+                    List<ITextTransformation> styles = textOther.ExtractTransformationsToOuterWorld().ToList();
+                    AddTextTransformationDecorator(styles);
+                }
+                else
+                {
+                    CyclingTransformationsDecorator? cyclicOther = decoratorOnTop as CyclingTransformationsDecorator;
+                    if (cyclicOther is not null) // it is a cyclic decorator
+                    {
+                        AddCyclicTransformationDecorator(cyclicOther);
+                    }
+                    // the if clause is for pure guarding, either it is null or a simple label which are both invalid in the context
+                    // cyclicTransformation is ILabel, but none of the labels are LabelDecoratorBase
+                }
+            }
+        }
+
+        
+        protected abstract void AddRandomDecorator(RandomTransformationDecorator randomOther);
+        protected abstract void AddTextTransformationDecorator(List<ITextTransformation> styles);
+        protected abstract void AddCyclicTransformationDecorator(CyclingTransformationsDecorator cyclicOther);
 
         public abstract ILabel RemoveDecorator();
 
         public abstract ILabel RemoveDecorator(ITextTransformation style);
 
-        // not yet tested
-        public abstract ILabel RemoveDecorator(LabelDecoratorBase decoratorOnTop);
+        public ILabel RemoveDecorator(LabelDecoratorBase decoratorOnTop)
+        {
+            RandomTransformationDecorator? randomOther = decoratorOnTop as RandomTransformationDecorator;
+            if (randomOther is not null)
+            {
+                return RemoveRandomDecorator(randomOther);
+            }
+            else // simple label or other type
+            {
+                TextTransformationDecorator? textOther = decoratorOnTop as TextTransformationDecorator;
+                if (textOther is not null) // it is textTransformationDecorator
+                {
+                    // extract its styles
+                    List<ITextTransformation> styles = textOther.ExtractTransformationsToOuterWorld().ToList();
+                    return RemoveTextTransformationDecorator(styles);
+                }
+                else
+                {
+                    CyclingTransformationsDecorator? cyclicOther = decoratorOnTop as CyclingTransformationsDecorator;
+                    if (cyclicOther is not null) // it is a cyclic decorator
+                    {
+                        return RemoveCyclicTransformationDecorator(cyclicOther);
+                    }
+                    // the if clause is for pure guarding, either it is null or a simple label which are both invalid in the context
+                    // cyclicTransformation is ILabel, but none of the labels are LabelDecoratorBase
+                }
+            }
+
+            return label;
+        }
+
+        protected abstract ILabel RemoveRandomDecorator(RandomTransformationDecorator randomOther);
+
+        protected abstract ILabel RemoveTextTransformationDecorator(List<ITextTransformation> styles);
+
+        protected abstract ILabel RemoveCyclicTransformationDecorator(CyclingTransformationsDecorator cyclicOther);
+
 
         public static ILabel RemoveDecoratorFrom(ILabel label, ITextTransformation style)
         {

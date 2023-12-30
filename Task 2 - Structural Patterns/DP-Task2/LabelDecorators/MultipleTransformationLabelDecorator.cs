@@ -9,7 +9,7 @@ namespace DP_Task2.LabelDecorators
         protected string? decoratedLabelContent;
         protected List<ITextTransformation> transformations;
 
-        public MultipleTransformationLabelDecorator(ILabel label) : base(label) 
+        public MultipleTransformationLabelDecorator(ILabel label) : base(label)
         {
             decoratedLabelContent = null;
             transformations = new List<ITextTransformation>();
@@ -19,6 +19,66 @@ namespace DP_Task2.LabelDecorators
             // TODO check for deep copying if necessary
             decoratedLabelContent = null;
             this.transformations = new List<ITextTransformation>(transformations);
+        }
+
+        public IReadOnlyList<ITextTransformation> Transformations
+        {
+            get => transformations;
+        }
+
+        public override sealed void AddDecorator(ITextTransformation style)
+        {
+            if (style is not null)
+            {
+                transformations.Add(style);
+            }
+        }
+
+        protected override sealed void AddCyclicTransformationDecorator(CyclingTransformationsDecorator cyclicOther)
+        {
+            transformations.AddRange(cyclicOther.Transformations);
+        }
+
+        protected override sealed void AddRandomDecorator(RandomTransformationDecorator randomOther)
+        {
+            // add all of its member styles(applied and not) to the unapplied transformations of current
+            transformations.AddRange(randomOther.Transformations);
+            transformations.AddRange(randomOther.AlreadyApplied);
+        }
+
+        protected override sealed void AddTextTransformationDecorator(List<ITextTransformation> styles)
+        {
+            transformations.AddRange(styles);
+        }
+
+        protected override sealed ILabel RemoveRandomDecorator(RandomTransformationDecorator randomOther)
+        {
+            List<ITextTransformation> stylesToRemove = randomOther.Transformations.ToList();
+            stylesToRemove.AddRange(randomOther.AlreadyApplied);
+            foreach (ITextTransformation style in stylesToRemove)
+            {
+                RemoveDecorator(style);
+            }
+            return this;
+        }
+
+        protected override sealed ILabel RemoveTextTransformationDecorator(List<ITextTransformation> styles)
+        {
+            foreach (ITextTransformation style in styles)
+            {
+                RemoveDecorator(style);
+            }
+            return this;
+        }
+
+        protected override sealed ILabel RemoveCyclicTransformationDecorator(CyclingTransformationsDecorator cyclicOther)
+        {
+            List<ITextTransformation> stylesToRemove = cyclicOther.Transformations.ToList();
+            foreach (ITextTransformation style in stylesToRemove)
+            {
+                RemoveDecorator(style);
+            }
+            return this;
         }
 
     }

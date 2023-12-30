@@ -18,6 +18,12 @@ namespace DP_Task2.LabelDecorators
             alreadyApplied = new List<ITextTransformation>();
         }
 
+        public IReadOnlyList<ITextTransformation> AlreadyApplied
+        {
+            get => alreadyApplied;
+        }
+
+
         public override string Text
         {
             get
@@ -47,6 +53,37 @@ namespace DP_Task2.LabelDecorators
             }
         }
 
+        // remove a random already applied one
+        public override ILabel RemoveDecorator()
+        {
+            if (alreadyApplied.Count != 0) // remove from the already appllied as they are less interesting
+            {
+                alreadyApplied.RemoveAt(alreadyApplied.Count - 1); // the style just added seems the most boring
+            }
+            else
+            {
+                if (transformations.Count != 0)
+                {
+                    transformations.RemoveAt(0); // the first style of all the list seems the least interesting as it gets repeated the most times
+                }
+            }
+
+            return this;
+        }
+
+        public override ILabel RemoveDecorator(ITextTransformation style)
+        {
+            if (style is not null)
+            {
+                bool hasBeenRemoved = alreadyApplied.Remove(style);
+                if (!hasBeenRemoved)
+                {
+                    transformations.Remove(style);
+                }
+            }
+            return this;
+        }
+
         // it is guaranteed that only non-empty list will be searched from
         private int GenerateRandomValidNumber()
         {
@@ -63,41 +100,8 @@ namespace DP_Task2.LabelDecorators
 
         private void RerollTransformations()
         {
-            // for instead of foreach will grant us faster removal
-            ITextTransformation style;
-            for (int i = 0; i < alreadyApplied.Count; i++)
-            {
-                style = alreadyApplied[i];
-                alreadyApplied.RemoveAt(i);
-                transformations.Add(style);
-            }
-        }
-
-
-        public override ILabel RemoveDecorator()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override ILabel RemoveDecorator(ITextTransformation style)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public override void AddDecorator(ITextTransformation style)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void AddDecorator(LabelDecoratorBase decoratorOnTop)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override ILabel RemoveDecorator(LabelDecoratorBase decoratorOnTop)
-        {
-            throw new NotImplementedException();
+            transformations.AddRange(alreadyApplied);
+            alreadyApplied.Clear();
         }
     }
 }
