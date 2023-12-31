@@ -1,7 +1,4 @@
-﻿using DP_Task2.Interfaces;
-using DP_Task2.LabelDecorators;
-using DP_Task2.Labels;
-using DP_Task2.Transformations;
+﻿using DP_Task2.Labels;
 
 namespace DP_Task2
 {
@@ -9,32 +6,15 @@ namespace DP_Task2
     {
         static void Main(string[] args)
         {
-            List<ITextTransformation> transformations = new List<ITextTransformation>()
-            {
-                new CapitalizeTransformation(),
-                new CensorerTransformation("wakanda"),
-                new DecorationTransformation(),
-                new ReplacerTransformation("wakanda", "forever"),
-                new SpaceNormalizationTransformation(),
-                new TrimLeftTransformation(),
-                new TrimRightTransformation()
-            };
-            List<ITextTransformation> transformations2 = new List<ITextTransformation>()
-            {
-                new CapitalizeTransformation(),
-                new CensorerTransformation("waSkanda"),
-                new DecorationTransformation(),
-                new ReplacerTransformation("BAGA", "forever"),
-                new SpaceNormalizationTransformation(),
-                new TrimLeftTransformation(),
-                new TrimRightTransformation()
-            };
+            BaseCustomLabel customLabel = new RealCustomLabel();
+            Console.WriteLine(customLabel.Text);
+            Console.WriteLine(customLabel.Text);
 
-            for (int i = 0; i < transformations2.Count; i++)
-            {
-                bool result = transformations[i].Equals(transformations2[i]);
-                Console.WriteLine(result);
-            }
+            Console.WriteLine(customLabel.Text);
+            Console.WriteLine(customLabel.Text);
+
+            Console.WriteLine(customLabel.Text);
+            Console.WriteLine(customLabel.Text);
         }
 
     }
