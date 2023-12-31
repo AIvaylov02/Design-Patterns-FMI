@@ -12,7 +12,12 @@ namespace DP_Task2.Transformations
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj as DecorationTransformation);
+            if (obj is null && this is null)
+                return true;
+            else if (obj is null)
+                return false;
+            else
+                return Equals(obj as DecorationTransformation);
         }
 
         public string Transform(string text)

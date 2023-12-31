@@ -16,7 +16,12 @@ namespace DP_Task2.Transformations
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj as CensorerTransformation);
+            if (obj is null && this is null)
+                return true;
+            else if (obj is null)
+                return false;
+            else
+                return Equals(obj as CensorerTransformation);
         }
 
         // redefine the specific part of the template method Transform
