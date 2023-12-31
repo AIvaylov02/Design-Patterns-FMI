@@ -92,22 +92,6 @@ namespace DP_Task2.LabelDecorators
 
             return this;
         }
-
-        private Stack<ITextTransformation> ExtractTransformations(TextTransformationDecorator decoratorOnTop)
-        {
-            Stack<ITextTransformation> extractedStyles = new Stack<ITextTransformation>();
-            TextTransformationDecorator? decoratorTraverser = new TextTransformationDecorator(decoratorOnTop);
-            while (decoratorTraverser is not null)
-            {
-                ITextTransformation? currentStyle = decoratorTraverser.Transformation;
-                if (currentStyle is not null) // to be able to deal with troll transformations added
-                {
-                    extractedStyles.Push(decoratorTraverser.Transformation);
-                }
-                decoratorTraverser = decoratorTraverser.label as TextTransformationDecorator;
-            }
-            return extractedStyles;
-        }
         
         public IReadOnlyCollection<ITextTransformation> ExtractTransformationsToOuterWorld()
         {
@@ -180,25 +164,7 @@ namespace DP_Task2.LabelDecorators
             ApplyStylesFromList(styles);
         }
 
-        private void ApplyStylesFromList(List<ITextTransformation> styles)
-        {
-            while (styles.Count > 0)
-            {
-                AddDecorator(styles[0]);
-                styles.RemoveAt(0);
-            }
-        }
-
-        // remove N styles from a linked list(This is very slow - N transformations from a linked list of N elements)
-        private void RemoveStylesFromList(List<ITextTransformation> styles)
-        {
-            while (styles.Count > 0)
-            {
-                RemoveDecorator(styles[0]);
-                styles.RemoveAt(0);
-            }
-        }
-
+        
         protected override ILabel RemoveRandomDecorator(RandomTransformationDecorator randomOther)
         {
             List<ITextTransformation> styles = randomOther.Transformations.ToList();
@@ -207,6 +173,7 @@ namespace DP_Task2.LabelDecorators
             return this;
         }
 
+        // remove N styles from a linked list(This is very slow - N transformations from a linked list of N elements)
         protected override ILabel RemoveTextTransformationDecorator(List<ITextTransformation> styles)
         {
             RemoveStylesFromList(styles);

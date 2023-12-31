@@ -30,7 +30,7 @@ namespace DP_Task2.LabelDecorators
             {
                 if (transformations.Count == 0 && alreadyApplied.Count == 0) // no valid transformations to apply
                 {
-                    return label.Text;
+                    decoratedLabelContent = label.Text;
                 }
                 else
                 {
@@ -48,8 +48,9 @@ namespace DP_Task2.LabelDecorators
                     ApplyTransformation(randomTransformation);
 
                     // we want to keep the state after style removal, so we should store the string as an intermediary result
-                    return decoratedLabelContent;
                 }
+
+                return decoratedLabelContent;
             }
         }
 
@@ -101,6 +102,12 @@ namespace DP_Task2.LabelDecorators
         private void RerollTransformations()
         {
             transformations.AddRange(alreadyApplied);
+            alreadyApplied.Clear();
+        }
+
+        public override void ResetStyles()
+        {
+            transformations.Clear();
             alreadyApplied.Clear();
         }
     }

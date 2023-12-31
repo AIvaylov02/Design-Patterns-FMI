@@ -81,5 +81,7 @@ namespace DP_Task2.LabelDecorators
             return this;
         }
 
+        public abstract void ResetStyles();
+
     }
 }

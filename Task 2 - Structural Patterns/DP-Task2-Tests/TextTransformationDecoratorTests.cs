@@ -11,7 +11,6 @@ namespace DP_Task2_Tests
     {
         // input text is immutable as well as the label underneath
 
-        // TODO in part 4 the transformations may change
         const string SAMPLE_RICH_TEXT = "   September   Will Be   May     ";
         const string EMPTY_TEXT = "";
         const string SEPTEMBER = "September";
@@ -404,7 +403,7 @@ namespace DP_Task2_Tests
         }
 
         [Test]
-        public void Test_TextTransformationDecorator_RemovingChainedDecorators_Recursively()
+        public void Test_TextTransformationDecorator_RemovingChained_TextTransformationDecorators_Recursively()
         {
             ILabel label = new SimpleLabel(SAMPLE_RICH_TEXT);
             ITextTransformation replacer = new ReplacerTransformation(SEPTEMBER, SUNNY_DAYS);
@@ -430,6 +429,82 @@ namespace DP_Task2_Tests
             // multiple decorator removal - only space normalization and sunny days converter will remain after it
             secondDecorator = new TextTransformationDecorator(label, new TrimRightTransformation());
             secondDecorator = new TextTransformationDecorator(secondDecorator, new ReplacerTransformation(SUNNY_DAYS, SEPTEMBER));
+            decorator.RemoveDecorator(secondDecorator);
+            Assert.That(decorator.Text, Is.EqualTo($" {SUNNY_DAYS} Will Be May "));
+
+            // add a new style which may match one of the few decorators, the result will end up the same
+            decorator.AddDecorator(new TrimRightTransformation());
+            Assert.That(decorator.Text, Is.EqualTo($" {SUNNY_DAYS} Will Be May"));
+            decorator.RemoveDecorator(secondDecorator);
+            Assert.That(decorator.Text, Is.EqualTo($" {SUNNY_DAYS} Will Be May "));
+        }
+
+        [Test]
+        public void Test_TextTransformationDecorator_RemovingChained_CyclicTransformationDecorator_Recursively()
+        {
+            ILabel label = new SimpleLabel(SAMPLE_RICH_TEXT);
+            ITextTransformation replacer = new ReplacerTransformation(SEPTEMBER, SUNNY_DAYS);
+            TextTransformationDecorator decorator = new TextTransformationDecorator(label, replacer);
+
+            replacer = new ReplacerTransformation(SUNNY_DAYS, SEPTEMBER);
+            decorator.AddDecorator(replacer);
+            decorator.AddDecorator(new TrimLeftTransformation());
+            decorator.AddDecorator(new TrimRightTransformation());
+            decorator.AddDecorator(new SpaceNormalizationTransformation());
+            Assert.That(decorator.Text, Is.EqualTo("September Will Be May"));
+
+            // null shouldn't change anything
+            CyclingTransformationsDecorator secondDecorator = new CyclingTransformationsDecorator(label);
+            decorator.RemoveDecorator(secondDecorator);
+            Assert.That(decorator.Text, Is.EqualTo("September Will Be May"));
+
+            // only the trim left transformation should be removed
+            secondDecorator.AddDecorator(new TrimLeftTransformation());
+            decorator.RemoveDecorator(secondDecorator);
+            Assert.That(decorator.Text, Is.EqualTo(" September Will Be May"));
+
+            // multiple decorator removal - only space normalization and sunny days converter will remain after it
+            secondDecorator.ResetStyles();
+            secondDecorator.AddDecorator(new TrimRightTransformation());
+            secondDecorator.AddDecorator(new ReplacerTransformation(SUNNY_DAYS, SEPTEMBER));
+            decorator.RemoveDecorator(secondDecorator);
+            Assert.That(decorator.Text, Is.EqualTo($" {SUNNY_DAYS} Will Be May "));
+
+            // add a new style which may match one of the few decorators, the result will end up the same
+            decorator.AddDecorator(new TrimRightTransformation());
+            Assert.That(decorator.Text, Is.EqualTo($" {SUNNY_DAYS} Will Be May"));
+            decorator.RemoveDecorator(secondDecorator);
+            Assert.That(decorator.Text, Is.EqualTo($" {SUNNY_DAYS} Will Be May "));
+        }
+
+        [Test]
+        public void Test_TextTransformationDecorator_RemovingChained_RandomTransformationDecorator_Recursively()
+        {
+            ILabel label = new SimpleLabel(SAMPLE_RICH_TEXT);
+            ITextTransformation replacer = new ReplacerTransformation(SEPTEMBER, SUNNY_DAYS);
+            TextTransformationDecorator decorator = new TextTransformationDecorator(label, replacer);
+
+            replacer = new ReplacerTransformation(SUNNY_DAYS, SEPTEMBER);
+            decorator.AddDecorator(replacer);
+            decorator.AddDecorator(new TrimLeftTransformation());
+            decorator.AddDecorator(new TrimRightTransformation());
+            decorator.AddDecorator(new SpaceNormalizationTransformation());
+            Assert.That(decorator.Text, Is.EqualTo("September Will Be May"));
+
+            // null shouldn't change anything
+            RandomTransformationDecorator secondDecorator = new RandomTransformationDecorator(label);
+            decorator.RemoveDecorator(secondDecorator);
+            Assert.That(decorator.Text, Is.EqualTo("September Will Be May"));
+
+            // only the trim left transformation should be removed
+            secondDecorator.AddDecorator(new TrimLeftTransformation());
+            decorator.RemoveDecorator(secondDecorator);
+            Assert.That(decorator.Text, Is.EqualTo(" September Will Be May"));
+
+            // multiple decorator removal - only space normalization and sunny days converter will remain after it
+            secondDecorator.ResetStyles();
+            secondDecorator.AddDecorator(new TrimRightTransformation());
+            secondDecorator.AddDecorator(new ReplacerTransformation(SUNNY_DAYS, SEPTEMBER));
             decorator.RemoveDecorator(secondDecorator);
             Assert.That(decorator.Text, Is.EqualTo($" {SUNNY_DAYS} Will Be May "));
 
@@ -517,11 +592,6 @@ namespace DP_Task2_Tests
             LabelDecoratorBase.RemoveDecoratorFrom(decorator, secondDecorator);
             Assert.That(decorator.Text, Is.EqualTo($" {SUNNY_DAYS} Will Be May "));
         }
-
-        // Repeat with the static function
-
-        // remove with the static function
-
 
     }
 }

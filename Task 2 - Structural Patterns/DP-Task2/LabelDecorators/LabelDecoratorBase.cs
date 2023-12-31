@@ -46,7 +46,7 @@ namespace DP_Task2.LabelDecorators
             }
         }
 
-        
+
         protected abstract void AddRandomDecorator(RandomTransformationDecorator randomOther);
         protected abstract void AddTextTransformationDecorator(List<ITextTransformation> styles);
         protected abstract void AddCyclicTransformationDecorator(CyclingTransformationsDecorator cyclicOther);
@@ -121,6 +121,25 @@ namespace DP_Task2.LabelDecorators
             return label;
         }
 
+        public void ApplyStylesFromList(List<ITextTransformation> styles)
+        {
+            List<ITextTransformation> copy = new List<ITextTransformation>(styles);
+            while (copy.Count > 0)
+            {
+                AddDecorator(copy[0]);
+                copy.RemoveAt(0);
+            }
+        }
+
+        public void RemoveStylesFromList(List<ITextTransformation> styles)
+        {
+            List<ITextTransformation> copy = new List<ITextTransformation>(styles);
+            while (copy.Count > 0)
+            {
+                RemoveDecorator(copy[0]);
+                copy.RemoveAt(0);
+            }
+        }
 
     }
 }

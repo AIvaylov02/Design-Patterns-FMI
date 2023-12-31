@@ -22,7 +22,7 @@ namespace DP_Task2.LabelDecorators
             {
                 if (transformations.Count == 0) // no valid transformations to apply
                 {
-                    return label.Text;
+                    decoratedLabelContent = label.Text;
                 }
                 else
                 {
@@ -32,8 +32,9 @@ namespace DP_Task2.LabelDecorators
 
                     decoratedLabelContent = transformations[nextTransformationIndex++].Transform(decoratedLabelContent);
                     nextTransformationIndex %= transformations.Count;
-                    return decoratedLabelContent;
                 }
+
+                return decoratedLabelContent;
             }
         }
 
@@ -54,15 +55,26 @@ namespace DP_Task2.LabelDecorators
             if (style is not null)
             {
                 int removeIndex = transformations.LastIndexOf(style);
-                if (removeIndex <= nextTransformationIndex)
+                if (removeIndex != -1) // style is found in the collection
                 {
-                    nextTransformationIndex--;
-                    if (nextTransformationIndex < 0)
-                        nextTransformationIndex = 0;
+                    if (removeIndex <= nextTransformationIndex)
+                    {
+                        nextTransformationIndex--;
+                        if (nextTransformationIndex < 0)
+                            nextTransformationIndex = 0;
+                    }
+
+                    transformations.RemoveAt(removeIndex);
                 }
-                transformations.RemoveAt(removeIndex);
+                
             }
             return this;
+        }
+
+        public override void ResetStyles()
+        {
+            transformations.Clear();
+            nextTransformationIndex = 0;
         }
     }
 }
