@@ -11,7 +11,17 @@ namespace DP_Task2.LabelDecorators
             nextTransformationIndex = 0;
         }
 
+        public CyclingTransformationsDecorator(IHelpLabel label) : base(label)
+        {
+            nextTransformationIndex = 0;
+        }
+
         public CyclingTransformationsDecorator(ILabel label, List<ITextTransformation> transformationToClone) : base(label, transformationToClone)
+        {
+            nextTransformationIndex = 0;
+        }
+
+        public CyclingTransformationsDecorator(IHelpLabel label, List<ITextTransformation> transformationToClone) : base(label, transformationToClone)
         {
             nextTransformationIndex = 0;
         }

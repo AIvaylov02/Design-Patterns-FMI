@@ -8,5 +8,12 @@ namespace DP_Task2.Labels
         {
             Console.WriteLine(label.Text);
         }
+
+        public static void PrintLabelWithHelpText(IHelpLabel helpLabel)
+        {
+            PrintLabel(helpLabel);
+            Console.WriteLine("Some help information about this label: " +
+                helpLabel.HelpText);
+        }
     }
 }

@@ -12,7 +12,19 @@ namespace DP_Task2.LabelDecorators
             alreadyApplied = new List<ITextTransformation>();
         }
 
+        public RandomTransformationDecorator(IHelpLabel label) : base(label)
+        {
+            generator = new Random();
+            alreadyApplied = new List<ITextTransformation>();
+        }
+
         public RandomTransformationDecorator(ILabel label, List<ITextTransformation> transformationToClone) : base(label, transformationToClone)
+        {
+            generator = new Random();
+            alreadyApplied = new List<ITextTransformation>();
+        }
+
+        public RandomTransformationDecorator(IHelpLabel label, List<ITextTransformation> transformationToClone) : base(label, transformationToClone)
         {
             generator = new Random();
             alreadyApplied = new List<ITextTransformation>();

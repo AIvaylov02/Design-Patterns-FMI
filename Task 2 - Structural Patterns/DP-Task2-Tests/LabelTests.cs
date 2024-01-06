@@ -1,5 +1,7 @@
 using DP_Task2.Interfaces;
+using DP_Task2.LabelDecorators;
 using DP_Task2.Labels;
+using DP_Task2.Transformations;
 
 namespace DP_Task2_Tests
 {
@@ -163,7 +165,7 @@ namespace DP_Task2_Tests
                 "Your entered number: Please enter the labels name, which you want to use for this label\r\n" +
                 "Your label name: ";
             Assert.That(output, Is.EqualTo(EXPECTED_OUTPUT));
-            labelUnderneath = label.Text; 
+            labelUnderneath = label.Text;
             Assert.That(labelUnderneath, Is.EqualTo("abc all the way")); // the transformation still stays
             output = writer.ToString();
             Assert.That(output, Is.EqualTo(EXPECTED_OUTPUT));
@@ -185,12 +187,142 @@ namespace DP_Task2_Tests
             output = writer.ToString();
             EXPECTED_OUTPUT += "Do you want to change the label for this item? If so type one of the following chars { 'y', 'Y', 'yes', 'Yes', 'YES' }\r\nYour choice: Please enter the labels name, which you want to use for this label\r\nYour label name: ";
             Assert.That(output, Is.EqualTo(EXPECTED_OUTPUT));
-            
+
             // next try will be without disturb
             labelUnderneath = label.Text;
             Assert.That(labelUnderneath, Is.EqualTo("do not disturb"));
             output = writer.ToString();
             Assert.That(output, Is.EqualTo(EXPECTED_OUTPUT));
         }
+    }
+
+    [TestFixture]
+    public class HelpLabelTests // test it as a part of every class - SimpleLabel, RichLabel, CustomLabel and try to decorate it
+    {
+        // firstly we create a base Label type - then we put it as part of a HelpLabel and then it gets decorated -> symbolises composite
+        // Note that by doing it this way, Labels without help text can exist as just ILabel implementations
+        const string MISSING_HELP_MESSAGE = HelpLabel.MISSING_HELP_MESSAGE;
+        const string EXAMPLE_TEXT = "abc";
+        const string EXAMPLE_HELP_MESSAGE = "Super useful help message!";
+
+        [Test]
+        public void Test_HelpLabel_Initilialization_EmptyHelpText()
+        {
+            ILabel label = new SimpleLabel(EXAMPLE_TEXT);
+            IHelpLabel helpLabel = new HelpLabel(label, string.Empty);
+            Assert.That(helpLabel.Text, Is.EqualTo(EXAMPLE_TEXT));
+            Assert.That(helpLabel.HelpText, Is.EqualTo(HelpLabel.MISSING_HELP_MESSAGE));
+        }
+
+        [Test]
+        public void Test_HelpLabel_NullHelpText()
+        {
+            ILabel label = new SimpleLabel(EXAMPLE_TEXT);
+            Assert.Throws<ArgumentNullException>(() => new HelpLabel(label, null));
+            IHelpLabel helpLabel = new HelpLabel(label, EXAMPLE_HELP_MESSAGE);
+            Assert.That(helpLabel.Text, Is.EqualTo(EXAMPLE_TEXT));
+            Assert.That(helpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE));
+            Assert.Throws<ArgumentNullException>(() => helpLabel.HelpText = null);
+            Assert.That(helpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE));
+        }
+
+        [Test]
+        public void Test_HelpLabel_RichLabelWithHelp()
+        {
+            ILabel label = new RichLabel(EXAMPLE_TEXT, "red", "Arial", 10.5);
+            Assert.Throws<ArgumentNullException>(() => new HelpLabel(label, null));
+            IHelpLabel helpLabel = new HelpLabel(label, EXAMPLE_HELP_MESSAGE);
+            Assert.That(helpLabel.Text, Is.EqualTo(EXAMPLE_TEXT));
+            Assert.That(helpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE));
+            helpLabel.HelpText = string.Empty;
+            Assert.That(helpLabel.HelpText, Is.EqualTo(MISSING_HELP_MESSAGE));
+        }
+
+        [Test]
+        public void Test_HelpLabel_CustomLabelWithHelp()
+        {
+            StringReader reader = new StringReader("0\n" + "abc\n");
+            StringWriter writer = new StringWriter();
+            ILabel label = new TestingCustomLabel(reader, writer);
+            Assert.Throws<ArgumentNullException>(() => new HelpLabel(label, null));
+            IHelpLabel helpLabel = new HelpLabel(label, EXAMPLE_HELP_MESSAGE);
+            Assert.That(helpLabel.Text, Is.EqualTo(EXAMPLE_TEXT));
+            string output = writer.ToString();
+            string EXPECTED_OUTPUT = "Please add an timeout option after which many calls you will be bothered again!\r\n" +
+                "Enter '0' if you don't wish a timeout, otherwise enter an positive integer\r\n" +
+                "Your entered number: Please enter the labels name, which you want to use for this label\r\n" +
+                "Your label name: ";
+            Assert.That(output, Is.EqualTo(EXPECTED_OUTPUT));
+            Assert.That(helpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE));
+            helpLabel.HelpText = string.Empty;
+            Assert.That(helpLabel.HelpText, Is.EqualTo(MISSING_HELP_MESSAGE));
+        }
+
+        [Test]
+        public void Test_HelpLabel_LabelDecorating()
+        {
+            ILabel label = new SimpleLabel(EXAMPLE_TEXT); // we have covered decorating all kinds of labels, together with getting help with all kinds of labels
+            // by combining the properties of the 2 assertions, we guarantee coverage on the whole equality set by just expressing one example(SimpleLabel)
+            IHelpLabel helpLabel = new HelpLabel(label, EXAMPLE_HELP_MESSAGE);
+            Assert.That(helpLabel.Text, Is.EqualTo(EXAMPLE_TEXT));
+            Assert.That(helpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE));
+
+            const string EXPECTED_DECORATED_RESULT = "-={ abc }=-";
+            ILabel decoratedContentWithoutHelpLabel = new TextTransformationDecorator(label, new DecorationTransformation());
+            Assert.That(decoratedContentWithoutHelpLabel.Text, Is.EqualTo(EXPECTED_DECORATED_RESULT));
+            // Assert.That(decoratedContentWithoutHelpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE)); -> it is not marked to contain helpLabel
+
+            ILabel decoratedContentWithoutAccessToHelpLabel = new TextTransformationDecorator(helpLabel, new DecorationTransformation());
+            Assert.That(decoratedContentWithoutHelpLabel.Text, Is.EqualTo(EXPECTED_DECORATED_RESULT));
+            // Assert.That(decoratedContentWithoutHelpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE)); -> it is not marked to contain helpLabel
+
+            IHelpLabel deroratedContentWithHelpLabel = new TextTransformationDecorator(helpLabel, new DecorationTransformation());
+            Assert.That(decoratedContentWithoutHelpLabel.Text, Is.EqualTo(EXPECTED_DECORATED_RESULT));
+            Assert.That(deroratedContentWithHelpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE));
+
+            IHelpLabel decoratedContentWithoutHelpMarkedAsHelpLabel = new TextTransformationDecorator(label, new DecorationTransformation());
+            Assert.That(decoratedContentWithoutHelpMarkedAsHelpLabel.Text, Is.EqualTo(EXPECTED_DECORATED_RESULT));
+            Assert.That(decoratedContentWithoutHelpMarkedAsHelpLabel.HelpText, Is.EqualTo(MISSING_HELP_MESSAGE));
+            // add a help message in the future
+            decoratedContentWithoutHelpMarkedAsHelpLabel.HelpText = EXAMPLE_HELP_MESSAGE;
+            Assert.That(decoratedContentWithoutHelpMarkedAsHelpLabel.Text, Is.EqualTo(EXPECTED_DECORATED_RESULT));
+            Assert.That(decoratedContentWithoutHelpMarkedAsHelpLabel.HelpText, Is.EqualTo(EXAMPLE_HELP_MESSAGE));
+        }
+
+
+        // the label printer is unchangeble and uses static functions, so I have tested the helpLabel with it in the main method.
+        // Swapping writers/readers is forbidden - Here is the tested code below - it works as intended
+        /*
+        const string MISSING_HELP_MESSAGE = HelpLabel.MISSING_HELP_MESSAGE;
+            const string EXAMPLE_TEXT = "abc";
+            const string EXAMPLE_HELP_MESSAGE = "Super useful help message!";
+
+            ILabel label = new SimpleLabel(EXAMPLE_TEXT);
+            IHelpLabel helpLabel = new HelpLabel(label, EXAMPLE_HELP_MESSAGE);
+            LabelPrinter.PrintLabelWithHelpText(helpLabel);
+            Console.WriteLine();
+
+            const string EXPECTED_DECORATED_RESULT = "-={ abc }=-";
+            ILabel decoratedContentWithoutHelpLabel = new TextTransformationDecorator(label, new DecorationTransformation());
+            LabelPrinter.PrintLabel(decoratedContentWithoutHelpLabel);
+            //LabelPrinter.PrintLabelWithHelpText(decoratedContentWithoutHelpLabel);
+            Console.WriteLine();
+
+            ILabel decoratedContentWithoutAccessToHelpLabel = new TextTransformationDecorator(helpLabel, new DecorationTransformation());
+            LabelPrinter.PrintLabel(decoratedContentWithoutAccessToHelpLabel);
+            //LabelPrinter.PrintLabelWithHelpText(decoratedContentWithoutAccessToHelpLabel);
+            Console.WriteLine();
+
+            IHelpLabel deroratedContentWithHelpLabel = new TextTransformationDecorator(helpLabel, new DecorationTransformation());
+            LabelPrinter.PrintLabelWithHelpText(deroratedContentWithHelpLabel);
+            Console.WriteLine();
+
+            IHelpLabel decoratedContentWithoutHelpMarkedAsHelpLabel = new TextTransformationDecorator(label, new DecorationTransformation());
+            LabelPrinter.PrintLabelWithHelpText(decoratedContentWithoutHelpMarkedAsHelpLabel);
+            Console.WriteLine();
+            // add a help message in the future
+            decoratedContentWithoutHelpMarkedAsHelpLabel.HelpText = EXAMPLE_HELP_MESSAGE;
+            LabelPrinter.PrintLabelWithHelpText(decoratedContentWithoutHelpMarkedAsHelpLabel);
+         */
     }
 }

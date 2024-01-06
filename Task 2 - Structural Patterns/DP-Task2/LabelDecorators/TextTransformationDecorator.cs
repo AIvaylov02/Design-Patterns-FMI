@@ -10,7 +10,17 @@ namespace DP_Task2.LabelDecorators
             this.transformation = transformation;
         }
 
+        public TextTransformationDecorator(IHelpLabel label, ITextTransformation transformation) : base(label)
+        {
+            this.transformation = transformation;
+        }
+
         public TextTransformationDecorator(ILabel label) : base(label)
+        {
+            transformation = null;
+        }
+
+        public TextTransformationDecorator(IHelpLabel label) : base(label)
         {
             transformation = null;
         }

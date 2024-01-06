@@ -4,7 +4,7 @@ namespace DP_Task2.Labels
 {
     public abstract class BaseCustomLabel : ILabel
     {
-        public class InteractiveLabel : ILabel
+        private class InteractiveLabel : ILabel
         {
             TextReader inputStream;
             TextWriter outputStream;

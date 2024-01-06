@@ -1,18 +1,28 @@
 ﻿using DP_Task2.Interfaces;
+using DP_Task2.Labels;
 
 namespace DP_Task2.LabelDecorators
 {
-    public abstract class LabelDecoratorBase : ILabel
+    public abstract class LabelDecoratorBase : IHelpLabel
     {
-        protected ILabel label;
+        protected IHelpLabel label; // if it is just a plain ILabel, then the helpLabel option will return an empty value. This way We can have ILabel Decorators and IHelpLabelDecorators
 
         public LabelDecoratorBase(ILabel label)
+        {
+            this.label = new HelpLabel(label);
+        }
+        public LabelDecoratorBase(IHelpLabel label)
         {
             this.label = label;
         }
 
         // this will be the overriden strategy method
         public abstract string Text { get; }
+        public string HelpText
+        {
+            get => label.HelpText;
+            set => label.HelpText = value;
+        }
 
         // text transformation means one style, while a LabelDecoratorBase can be a list of styles
         public abstract void AddDecorator(ITextTransformation style);
