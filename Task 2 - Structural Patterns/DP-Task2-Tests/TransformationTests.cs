@@ -169,23 +169,23 @@ namespace DP_Task2_Tests
             Assert.Throws<ArgumentNullException>(() => censorer.Transform(NULL_STRING));
         }
 
-        [Test]
-        public void Test_Transformation_Censorer_Change_BadWord()
-        {
-            const string NEW_BAD_WORD = "September";
+        //[Test] - is invalid because of part 9, which uses that badWord is immutable
+        //public void Test_Transformation_Censorer_Change_BadWord()
+        //{
+        //    const string NEW_BAD_WORD = "September";
 
-            CensorerTransformation censorer = new CensorerTransformation(STANDARD_BAD_WORD);
-            const string TEST_FOR_THIS_OCCASION = "September will be May to some of you, so be ready for September!";
-            // nothing will happen (as bad word is still "abc", so the string remains unchanged
-            string result = censorer.Transform(TEST_FOR_THIS_OCCASION);
-            Assert.That(result, Is.EqualTo(TEST_FOR_THIS_OCCASION));
+        //    CensorerTransformation censorer = new CensorerTransformation(STANDARD_BAD_WORD);
+        //    const string TEST_FOR_THIS_OCCASION = "September will be May to some of you, so be ready for September!";
+        //    // nothing will happen (as bad word is still "abc", so the string remains unchanged
+        //    string result = censorer.Transform(TEST_FOR_THIS_OCCASION);
+        //    Assert.That(result, Is.EqualTo(TEST_FOR_THIS_OCCASION));
 
 
-            censorer.BadWord = NEW_BAD_WORD;
-            result = censorer.Transform(TEST_FOR_THIS_OCCASION);
-            const string EXPECTED_RESULT = "********* will be May to some of you, so be ready for *********!";
-            Assert.That(result, Is.EqualTo(EXPECTED_RESULT));
-        }
+        //    // censorer.BadWord = NEW_BAD_WORD; is invalid because of flyweight added in part 8
+        //    result = censorer.Transform(TEST_FOR_THIS_OCCASION);
+        //    const string EXPECTED_RESULT = "********* will be May to some of you, so be ready for *********!";
+        //    Assert.That(result, Is.EqualTo(EXPECTED_RESULT));
+        //}
 
         [Test]
         public void Test_Transformation_Censorer_SameBadWordAsReplacement_EasyToSpot()

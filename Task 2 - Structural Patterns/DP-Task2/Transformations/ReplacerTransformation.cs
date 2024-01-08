@@ -4,7 +4,7 @@ namespace DP_Task2.Transformations
     public class ReplacerTransformation : BadWordTransformation, IEquatable<ReplacerTransformation>
     {
         private string replacement;
-        public ReplacerTransformation(string badWord, string replacement) : base(badWord)
+        public ReplacerTransformation(string? badWord, string? replacement) : base(badWord)
         {
             Replacement = replacement;
         }
@@ -33,7 +33,7 @@ namespace DP_Task2.Transformations
             get => replacement;
             set
             {
-                if (value == null)
+                if (value is null)
                     throw new ArgumentNullException($"{nameof(value)} cannot be NULL!");
 
                 replacement = value;

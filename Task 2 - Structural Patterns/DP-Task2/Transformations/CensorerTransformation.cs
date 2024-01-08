@@ -4,7 +4,7 @@ namespace DP_Task2.Transformations
 {
     public class CensorerTransformation : BadWordTransformation, IEquatable<CensorerTransformation>
     {
-        public CensorerTransformation(string badWord) : base(badWord) { }
+        public CensorerTransformation(string? badWord) : base(badWord) { }
 
         public bool Equals(CensorerTransformation? other)
         {
@@ -35,6 +35,19 @@ namespace DP_Task2.Transformations
             foreach (char ch in BadWord)
                 sb.Append(CENSORSHIP_TOKEN);
             return sb.ToString();
+        }
+
+        // since it will be used as flyweight, we should prohibit the ability to change the underlying badWord
+        public new string BadWord
+        {
+            get => badWord;
+            private set
+            {
+                if (value is null)
+                    throw new ArgumentNullException($"{nameof(value)} cannot be NULL!");
+
+                badWord = value;
+            }
         }
     }
 }

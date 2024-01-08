@@ -1,6 +1,6 @@
 ﻿using DP_Task2.Interfaces;
 
-namespace DP_Task2.Labels
+namespace DP_Task2.LabelUtilizers
 {
     public class LabelPrinter
     {

@@ -7,7 +7,7 @@ namespace DP_Task2.Transformations
     {
         protected string badWord;
 
-        public BadWordTransformation(string badWord)
+        public BadWordTransformation(string? badWord)
         {
             BadWord = badWord;
         }
@@ -16,7 +16,7 @@ namespace DP_Task2.Transformations
             get => badWord;
             set
             {
-                if (value == null)
+                if (value is null)
                     throw new ArgumentNullException($"{nameof(value)} cannot be NULL!");
 
                 badWord = value;

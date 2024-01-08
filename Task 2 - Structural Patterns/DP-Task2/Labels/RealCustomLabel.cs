@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DP_Task2.Labels
+﻿namespace DP_Task2.Labels
 {
     public class RealCustomLabel : BaseCustomLabel
     {
