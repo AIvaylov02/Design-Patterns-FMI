@@ -9,11 +9,26 @@ namespace DP_Task2.LabelDecorators
 
         public LabelDecoratorBase(ILabel label)
         {
-            this.label = new HelpLabel(label);
+            if (label is LabelDecoratorBase)
+            {
+                this.label = (LabelDecoratorBase)label;
+            }
+            else
+            {
+                this.label = new HelpLabel(label);
+            }
+            
         }
         public LabelDecoratorBase(IHelpLabel label)
         {
-            this.label = label;
+            if (label is LabelDecoratorBase) // to allow decorator chaining
+            {
+                this.label = (LabelDecoratorBase)label;
+            }
+            else
+            {
+                this.label = label;
+            }
         }
 
         // this will be the overriden strategy method
@@ -22,6 +37,27 @@ namespace DP_Task2.LabelDecorators
         {
             get => label.HelpText;
             set => label.HelpText = value;
+        }
+
+        public ILabel Label
+        {
+            get
+            {
+                if (label is LabelDecoratorBase) // this needs to be top priority
+                    return label;
+                else
+                {
+                    HelpLabel? parsedLabel = label as HelpLabel;
+                    if (parsedLabel is not null && parsedLabel.HelpText == HelpLabel.MISSING_HELP_MESSAGE) // label is of base type - simple, rich, custom or it is not a valid help label
+                    {
+                        return label.Label;
+                    }
+                    else
+                    {
+                        return label;
+                    }
+                }
+            }
         }
 
         // text transformation means one style, while a LabelDecoratorBase can be a list of styles
@@ -151,5 +187,11 @@ namespace DP_Task2.LabelDecorators
             }
         }
 
+        public abstract IReadOnlyCollection<ITextTransformation> ExtractStyles();
+
+        public ILabel RemoveWholeDecorator()
+        {
+                return label;
+        }
     }
 }

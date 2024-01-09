@@ -1,14 +1,14 @@
-﻿namespace DP_Task2.Interfaces
+﻿using DP_Task2.LabelDecorators;
+
+namespace DP_Task2.Interfaces
 {
     public interface ILabelBuilder
     {
-        // label type underneath
         string LabelType { get; set; }
-
-        // with or without help text
         string HelpText { get; set; }
-        // Add help text
-        // remove help text if such exists - let it be always
+        public string? TextColor { get; set; }
+        public string? Font { get; set; }
+        public double? FontSize { get; set; }
 
         IReadOnlyCollection<ITextTransformation> Transformations { get; }
 
@@ -21,12 +21,21 @@
 
         void ClearTransformations();
         void AddTransformation(string type, string? censoredWord = null, string? replacement = null);
+        
+        void AddTransformation(ITextTransformation transformation);
         void RemoveTransformation(string type, string? censoredWord = null, string? replacement = null);
 
-        void ApplyTransformationsAsADecorator(string decoratorType);
-        void RemoveDecorator();
-        void RemoveDecorators();
+        void RemoveTransformation(ITextTransformation transformation);
+        void RemoveTransformation(); // remove the lastly added transformation
 
+        void ApplyTransformationsAsADecorator(string decoratorType);
+        void AddDecorator(LabelDecoratorBase decoratorToApply);
+        LabelDecoratorBase? RemoveDecorator(); // remove the lastly added decorator
+        Stack<LabelDecoratorBase> RemoveDecorators(); // clear all decorators
+
+        void ResetStyles();
+
+        void ResetLabel();
         ILabel? BuildLabel();
     }
 }

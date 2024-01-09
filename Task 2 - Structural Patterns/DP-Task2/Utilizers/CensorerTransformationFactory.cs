@@ -8,7 +8,7 @@ namespace DP_Task2.Utilizers
     {
         private static CensorerTransformationSingletonFactory? instance;
         private static Dictionary<string, CensorerTransformation>? censorships;
-        private const int UPPER_BOUND_OF_FLYWEIGHT_WORD = 4;
+        public const int UPPER_BOUND_OF_FLYWEIGHT_WORD = 4;
 
         private CensorerTransformationSingletonFactory()
         { }

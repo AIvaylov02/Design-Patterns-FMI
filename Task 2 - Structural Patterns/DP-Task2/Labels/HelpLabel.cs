@@ -42,5 +42,10 @@ namespace DP_Task2.Labels
         {
             get => underlyingLabel.Text;
         }
+
+        public ILabel Label
+        {
+            get => underlyingLabel;
+        }
     }
 }

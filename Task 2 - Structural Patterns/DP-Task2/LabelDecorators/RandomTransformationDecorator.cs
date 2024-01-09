@@ -69,6 +69,12 @@ namespace DP_Task2.LabelDecorators
         // remove a random already applied one
         public override ILabel RemoveDecorator()
         {
+            if (alreadyApplied.Count == 0 && transformations.Count == 0)
+            {
+                return Label;
+            }
+
+
             if (alreadyApplied.Count != 0) // remove from the already appllied as they are less interesting
             {
                 alreadyApplied.RemoveAt(alreadyApplied.Count - 1); // the style just added seems the most boring
@@ -86,6 +92,11 @@ namespace DP_Task2.LabelDecorators
 
         public override ILabel RemoveDecorator(ITextTransformation style)
         {
+            if (alreadyApplied.Count == 0 && transformations.Count == 0)
+            {
+                return Label;
+            }
+
             if (style is not null)
             {
                 bool hasBeenRemoved = alreadyApplied.Remove(style);
@@ -121,6 +132,13 @@ namespace DP_Task2.LabelDecorators
         {
             transformations.Clear();
             alreadyApplied.Clear();
+        }
+
+        public override IReadOnlyCollection<ITextTransformation> ExtractStyles()
+        {
+            List<ITextTransformation> result = new List<ITextTransformation>(transformations);
+            result.AddRange(alreadyApplied);
+            return result;
         }
     }
 }

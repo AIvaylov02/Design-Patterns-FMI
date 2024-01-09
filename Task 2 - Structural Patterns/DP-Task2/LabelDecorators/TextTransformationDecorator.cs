@@ -196,5 +196,10 @@ namespace DP_Task2.LabelDecorators
             RemoveStylesFromList(styles);
             return this;
         }
+
+        public override IReadOnlyCollection<ITextTransformation> ExtractStyles()
+        {
+            return ExtractTransformationsToOuterWorld();
+        }
     }
 }

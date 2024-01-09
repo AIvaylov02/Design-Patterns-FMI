@@ -48,6 +48,11 @@ namespace DP_Task2.LabelDecorators
             }
         }
 
+        public override IReadOnlyCollection<ITextTransformation> ExtractStyles()
+        {
+            return transformations;
+        }
+
         public override ILabel RemoveDecorator()
         {
             if (transformations.Count != 0)
@@ -56,12 +61,18 @@ namespace DP_Task2.LabelDecorators
                 if (nextTransformationIndex == removeIndex)
                     nextTransformationIndex = 0;
                 transformations.RemoveAt(removeIndex);
+                return this;
             }
-            return this;
+            return Label;
         }
 
         public override ILabel RemoveDecorator(ITextTransformation style)
         {
+            if (Transformations.Count == 0)
+            {
+                return Label;
+            }
+
             if (style is not null)
             {
                 int removeIndex = transformations.LastIndexOf(style);
@@ -75,8 +86,8 @@ namespace DP_Task2.LabelDecorators
                     }
 
                     transformations.RemoveAt(removeIndex);
+
                 }
-                
             }
             return this;
         }

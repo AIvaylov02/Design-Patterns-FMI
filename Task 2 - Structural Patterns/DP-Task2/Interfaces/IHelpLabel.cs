@@ -3,5 +3,7 @@
     public interface IHelpLabel : ILabel
     {
         string HelpText { get; set; }
+
+        public ILabel Label { get; }
     }
 }
