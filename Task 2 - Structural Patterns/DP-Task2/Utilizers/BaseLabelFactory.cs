@@ -15,12 +15,26 @@ namespace DP_Task2.Utilizers
             {
                 case SIMPLE_LABEL_TYPE:
                     if (text is null)
-                        throw new ArgumentNullException($"{nameof(fontSize)} cannot be NULL!");
+                        throw new ArgumentNullException($"{nameof(text)} cannot be NULL!");
                     return new SimpleLabel(text);
 
                 case RICH_LABEL_TYPE:
-                    if (text is null || textColor is null || font is null || fontSize is null)
+                    if (text is null)
+                    {
+                        throw new ArgumentNullException($"{nameof(text)} cannot be NULL!");
+                    }
+                    else if (textColor is null)
+                    {
+                        throw new ArgumentNullException($"{nameof(textColor)} or color cannot be NULL!");
+                    }
+                    else if (font is null)
+                    {
+                        throw new ArgumentNullException($"{nameof(font)} cannot be NULL!");
+                    }
+                    else if (fontSize is null)
+                    {
                         throw new ArgumentNullException($"{nameof(fontSize)} cannot be NULL!");
+                    }
                     return new RichLabel(text, textColor, font, (double)fontSize);
                 case CUSTOM_LABEL_TYPE:
                     return new RealCustomLabel();

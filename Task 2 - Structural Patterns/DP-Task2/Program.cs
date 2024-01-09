@@ -11,11 +11,10 @@ namespace DP_Task2
     {
         static void Main(string[] args)
         {
-            ILabel custom = BaseLabelFactory.CreateLabel("custom");
-            Console.WriteLine(custom.Text);
-            Console.WriteLine(custom.Text);
-            Console.WriteLine(custom.Text);
-            Console.WriteLine(custom.Text);
+            RealUserInteractor userInteractor = new RealUserInteractor();
+            userInteractor.ReadHowManyProductsToCreate();
+            userInteractor.CreateProducts();
+            userInteractor.PrintResults();
         }
 
     }
