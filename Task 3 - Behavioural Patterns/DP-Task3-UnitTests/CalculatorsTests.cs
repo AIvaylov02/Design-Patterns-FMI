@@ -56,8 +56,6 @@ namespace DP_Task3_UnitTests
         [Test]
         public void Test_MD5_File_EMPTY()
         {
-            string pwd = Directory.GetCurrentDirectory();
-            // file containing abc
             string fileName = "empty.txt";
             string path = HasherHelperFunctions.GetFullPathToFileFromTestingProject(fileName);
             string hashResult = checksumCalculator.Calculate(path);
@@ -154,8 +152,6 @@ namespace DP_Task3_UnitTests
         [Test]
         public void Test_SHA1_File_EMPTY()
         {
-            string pwd = Directory.GetCurrentDirectory();
-            // file containing abc
             string fileName = "empty.txt";
             string path = HasherHelperFunctions.GetFullPathToFileFromTestingProject(fileName);
             string hashResult = checksumCalculator.Calculate(path);
@@ -253,8 +249,6 @@ namespace DP_Task3_UnitTests
         [Test]
         public void Test_SHA1_File_EMPTY()
         {
-            string pwd = Directory.GetCurrentDirectory();
-            // file containing abc
             string fileName = "empty.txt";
             string path = HasherHelperFunctions.GetFullPathToFileFromTestingProject(fileName);
             string hashResult = checksumCalculator.Calculate(path);
