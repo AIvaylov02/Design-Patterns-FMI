@@ -10,6 +10,13 @@
 
         bool ContainsFile(string fileName);
         bool ContainsFile(IMyFile file);
+
+        bool ContainsFileRecursively(string fileName);
+
+        // Get all direct children of the directory
         IReadOnlyCollection<IMyFile> GetFiles();
+
+        // Get file object by specifying fileName. Will return Null if file is not found within directory.
+        IMyFile? GetFile(string fileName);
     }
 }

@@ -41,6 +41,51 @@ namespace DP_Task3.FileSystem.Components
             return files.Contains(file);
         }
 
+        public bool ContainsFileRecursively(string fileName)
+        {
+            if (ContainsFile(fileName) == true)
+                return true;
+
+            // we have to dig deeper
+            foreach (var file in files)
+            {
+                MyDirectory? child = file as MyDirectory;
+                if (child is not null)
+                {
+                    if (child.ContainsFileRecursively(fileName))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public IMyFile? GetFile(string fileName)
+        {
+            // search each file in current and the directories then recursively
+            IMyFile? matched = files.Where(item =>
+            {
+                string[] filePathSplit = item.FilePath.Split('/');
+                return filePathSplit[filePathSplit.Length - 1] == fileName;
+            }).FirstOrDefault(); // one item at most should match
+            if (matched is null)
+            {
+                // get the directories on the current level
+                MyDirectory[] directories = files.Where(item => item is MyDirectory).Select(item => (MyDirectory)item).ToArray();
+                foreach (var dir in directories) // traverse each of them
+                {
+                    matched = dir.GetFile(fileName);
+                    if (matched is not null)
+                    {
+                        return matched;
+                    }
+                }
+            }
+
+            return matched;
+        }
+
         public IMyFile? RemoveFile(string fileName)
         {
             // get the file obj by specifying fileName

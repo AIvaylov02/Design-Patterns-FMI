@@ -1,6 +1,5 @@
 ﻿using DP_Task3.FileSystem.Components;
 using DP_Task3.FileSystem.Components.Interfaces__ADTs;
-using System.Drawing;
 
 namespace DP_Task3_UnitTests
 {
@@ -113,6 +112,65 @@ namespace DP_Task3_UnitTests
             Assert.That(dir.ContainsFile("text2.txt"), Is.True);
             Assert.That(dir.ContainsFile("text1.txt"), Is.True);
             Assert.That(dir.ContainsFile("minyor.txt"), Is.False);
+        }
+
+        [Test]
+        public void Test_Directory_Search_File_Recursively()
+        {
+            MyDirectory? dir = file as MyDirectory;
+            Assert.That(dir, Is.Not.Null);
+
+            dir.AddFile(anotherFile);
+            Assert.That(dir.ContainsFileRecursively(anotherFile.FilePath.Split(@"/").TakeLast(1).First()), Is.True); // get only the fileName
+            SortedSet<IMyFile> currentFiles = new SortedSet<IMyFile>(new MyDirectory.CustomFileNameComparator()) { anotherFile };
+            Assert.That(dir.GetFiles(), Is.EquivalentTo(currentFiles));
+
+            anotherFile = new MyConcreteFile(path + @"/text2.txt", SIZE + 5);
+            dir.AddFile(anotherFile);
+            Assert.That(dir.ContainsFileRecursively(anotherFile.FilePath.Split(@"/").TakeLast(1).First()), Is.True); // get only the fileName
+            currentFiles.Add(anotherFile);
+            Assert.That(dir.GetFiles(), Is.EquivalentTo(currentFiles));
+            Assert.That(dir.ContainsFileRecursively("text2.txt"), Is.True);
+            Assert.That(dir.ContainsFileRecursively("text1.txt"), Is.True);
+            Assert.That(dir.ContainsFileRecursively("minyor.txt"), Is.False);
+
+            MyDirectory newDir = new MyDirectory(path + @"/dir2"); // add a subfolder with a file to the main folder
+            dir.AddFile(newDir);
+            anotherFile = new MyConcreteFile(newDir.FilePath + @"/text3.txt", SIZE);
+            newDir.AddFile(anotherFile);
+            Assert.That(dir.ContainsFile("text3.txt"), Is.False);
+            Assert.That(dir.ContainsFileRecursively("text3.txt"), Is.True);
+        }
+
+        [Test]
+        public void Test_Directory_GetFile()
+        {
+            MyDirectory? dir = file as MyDirectory;
+            Assert.That(dir, Is.Not.Null);
+
+            dir.AddFile(anotherFile);
+            IMyFile? extracted = dir.GetFile(anotherFile.FilePath.Split(@"/").TakeLast(1).First()); // get file obj by specifying name
+            Assert.That(extracted, Is.Not.Null);
+            Assert.That(extracted, Is.EqualTo(anotherFile));
+
+            anotherFile = new MyConcreteFile(path + @"/text2.txt", SIZE + 5);
+            dir.AddFile(anotherFile);
+            extracted = dir.GetFile(anotherFile.FilePath.Split(@"/").TakeLast(1).First());
+            Assert.That(extracted, Is.Not.Null);
+            Assert.That(extracted, Is.EqualTo(anotherFile));
+
+            anotherFile = new MyConcreteFile(path + @"/minyor.txt", SIZE + 5); // create a file but don't add it
+            extracted = dir.GetFile(anotherFile.FilePath.Split(@"/").TakeLast(1).First());
+            Assert.That(extracted, Is.Null);
+            Assert.That(extracted, Is.Not.EqualTo(anotherFile));
+
+            MyDirectory newDir = new MyDirectory(path + @"/dir2"); // add a subfolder with a file to the main folder
+            dir.AddFile(newDir); // add the subfolder to the main folder
+            anotherFile = new MyConcreteFile(newDir.FilePath + @"/text3.txt", SIZE);
+            newDir.AddFile(anotherFile); // add the file to the subfolder
+            extracted = dir.GetFile(anotherFile.FilePath.Split(@"/").TakeLast(1).First());
+            Assert.That(extracted, Is.Not.Null);
+            Assert.That(extracted, Is.EqualTo(anotherFile));
         }
 
         [Test]
