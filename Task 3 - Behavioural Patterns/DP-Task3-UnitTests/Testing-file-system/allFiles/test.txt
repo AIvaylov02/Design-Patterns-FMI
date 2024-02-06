@@ -1,0 +1,22 @@
+  File0:    64   with rel_path: .
+  File1:    32   with rel_path: ../normalPlainTree
+  File2:    20   with rel_path: ../normalPlainTree/abcOnly
+  File3:     3   with rel_path: ../normalPlainTree/abcOnly/abc.txt
+  File4:    17   with rel_path: ../normalPlainTree/abcOnly/abcHello.txt
+  File5:     0   with rel_path: ../normalPlainTree/empty.txt
+  File6:    12   with rel_path: ../normalPlainTree/Hello world!.txt
+  File7:     0   with rel_path: empty.txt
+  File8:    32   with rel_path: SubDir
+  File9:     3   with rel_path: SubDir/abc.txt
+ File10:    17   with rel_path: SubDir/abcHello.txt
+ File11:    12   with rel_path: SubDir/Hello world!.txt
+
+  File0: 900150983cd24fb0d6963f7d28e17f72   with rel_path: ../normalPlainTree/abcOnly/abc.txt
+  File1: bf41f7ff9743df88a7d0e2f192c50c3f   with rel_path: ../normalPlainTree/abcOnly/abcHello.txt
+  File2: d41d8cd98f00b204e9800998ecf8427e   with rel_path: ../normalPlainTree/empty.txt
+  File3: 86fb269d190d2c85f6e0468ceca42a20   with rel_path: ../normalPlainTree/Hello world!.txt
+  File4: d41d8cd98f00b204e9800998ecf8427e   with rel_path: empty.txt
+  File5: 900150983cd24fb0d6963f7d28e17f72   with rel_path: SubDir/abc.txt
+  File6: bf41f7ff9743df88a7d0e2f192c50c3f   with rel_path: SubDir/abcHello.txt
+  File7: 86fb269d190d2c85f6e0468ceca42a20   with rel_path: SubDir/Hello world!.txt
+

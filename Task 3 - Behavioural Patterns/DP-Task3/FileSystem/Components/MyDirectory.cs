@@ -1,4 +1,5 @@
 ﻿using DP_Task3.FileSystem.Components.Interfaces__ADTs;
+using DP_Task3.Visitors.Interfaces__ADTs;
 
 namespace DP_Task3.FileSystem.Components
 {
@@ -127,6 +128,11 @@ namespace DP_Task3.FileSystem.Components
                     return -1;
                 return first.FilePath.CompareTo(second.FilePath);
             }
+        }
+
+        public override string Accept(IVisitor visitor, string? basePath = null)
+        {
+            return visitor.VisitDirectory(this, basePath);
         }
     }
 }

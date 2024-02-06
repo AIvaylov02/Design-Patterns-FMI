@@ -73,9 +73,10 @@ namespace DP_Task3.FileSystem.Builders
                 }
                 else if (child is MyDirectory)
                 {
-                    MyDirectory processedChild = ProcessLinkFollowing((MyDirectory)child);
-                    dir.RemoveFile(child);
-                    dir.AddFile(processedChild);
+                    ProcessLinkFollowing((MyDirectory)child);
+                    // MyDirectory processedChild = ProcessLinkFollowing((MyDirectory)child);
+                    // dir.RemoveFile(child);
+                    // dir.AddFile(processedChild);
                 }
             }
             return dir;

@@ -1,4 +1,6 @@
-﻿namespace DP_Task3.FileSystem.Components.Interfaces__ADTs
+﻿using DP_Task3.Visitors.Interfaces__ADTs;
+
+namespace DP_Task3.FileSystem.Components.Interfaces__ADTs
 {
     public interface IMyFile : IEquatable<IMyFile>
     {
@@ -8,6 +10,10 @@
         // Theoretically we should use Big Integer for the task but I will stick to ulong as I think Big Int is overkill, as few of the systems I know barely exceed the 2TB limit.
         public ulong CalculateSize();
 
-        public string FilePath { get; } 
+        public string FilePath { get; }
+
+        public string Accept(IVisitor visitor, string? basePath = null); // accept method for the visitor pattern (implements Double Dispatch technique)
+
+        public string GetRelativePath(string absoluteRoot);
     }
 }

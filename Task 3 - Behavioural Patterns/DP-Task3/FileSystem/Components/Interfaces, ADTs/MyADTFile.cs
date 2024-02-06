@@ -1,4 +1,6 @@
-﻿namespace DP_Task3.FileSystem.Components.Interfaces__ADTs
+﻿using DP_Task3.Visitors.Interfaces__ADTs;
+
+namespace DP_Task3.FileSystem.Components.Interfaces__ADTs
 {
     public abstract class MyADTFile : IMyFile
     {
@@ -14,9 +16,9 @@
 
         public bool Equals(IMyFile? other) // this is needed in order to sucessfully remove or add files from a directory
         {
-            if (other is null) 
+            if (other is null)
                 return false;
-            if (ReferenceEquals(this, other)) 
+            if (ReferenceEquals(this, other))
                 return true;
             return path == other.FilePath;
         }
@@ -26,13 +28,23 @@
             return Equals(obj as IMyFile);
         }
 
-        public string FilePath 
-        { 
-            get => path; 
+        public string FilePath
+        {
+            get => path;
             private set
             {
                 path = value;
             }
+        }
+
+        public virtual string Accept(IVisitor visitor, string? basePath = null)
+        {
+            return visitor.VisitConcreteFile(this, basePath);
+        }
+
+        public string GetRelativePath(string absoluteRoot)
+        {
+            return Path.GetRelativePath(absoluteRoot, path).Replace(@"\", @"/");
         }
     }
 }
